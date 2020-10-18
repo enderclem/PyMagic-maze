@@ -4,7 +4,7 @@ import upemtk as utk
 import doctest
 
 def main():
-    init_game(720, 480)
+    init_game()
 
     playing = True
     while playing:
@@ -13,9 +13,12 @@ def main():
 
         if input[2] == "Touche":
             if input[1] == "Escape":
-                #arret du programme
+                # arret du programme
                 playing = False
+            if input[1] in ("z", "q", "s", "d"):
+                move_player(input[1])
 
+        display()
         if input[2] == "ClicGauche":
             issou()
 
@@ -24,6 +27,5 @@ def main():
 
 
 if __name__ == '__main__':
-    print(help(utk.image))
 
     main()
