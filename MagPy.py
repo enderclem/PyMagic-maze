@@ -2,7 +2,7 @@
 import upemtk as utk
 from Levels import level
 
-win_scale_x = 600
+win_scale_x = 400
 win_scale_y = 400
 player_pos1 = (4, 4)
 player_pos2 = (4, 5)
@@ -17,11 +17,10 @@ def display():
         for x in range(len(level[y])):
             if level[y][x] == 1:
                 utk.rectangle(x*40, y*40, (x+1)*40, (y+1)*40, remplissage="gray", epaisseur=0)
-
-    utk.cercle(player_pos1[0]*40+20, player_pos1[1]*40+20, 15, remplissage="purple", epaisseur=2)
-    utk.cercle(player_pos2[0]*40+20, player_pos2[1]*40+20, 15, remplissage="green", epaisseur=2)
-    utk.cercle(player_pos3[0]*40+20, player_pos3[1]*40+20, 15, remplissage="orange", epaisseur=2)
-    utk.cercle(player_pos4[0]*40+20, player_pos4[1]*40+20, 15, remplissage="yellow", epaisseur=2)
+    utk.cercle(player_pos1[0]*40+20, player_pos1[1]*40+20, 15, remplissage="blue violet", epaisseur=2)
+    utk.cercle(player_pos2[0]*40+20, player_pos2[1]*40+20, 15, remplissage="lime green", epaisseur=2)
+    utk.cercle(player_pos3[0]*40+20, player_pos3[1]*40+20, 15, remplissage="DarkOrange1", epaisseur=2)
+    utk.cercle(player_pos4[0]*40+20, player_pos4[1]*40+20, 15, remplissage="yellow2", epaisseur=2)
 
 
 
