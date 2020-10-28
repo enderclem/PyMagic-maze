@@ -13,6 +13,7 @@ x Les persos
 - echelle
 - mur plein
 - mur entre cases
+- sol
 
 Phase 1 :
 - niveau 10x15
@@ -22,7 +23,8 @@ x mouvement des 4 persos
 - délai de 3 min
 - ajout mode debug
 - Ajout Image
-- Ajout sélecteur de pion
+x Ajout sélecteur de pion
+- Afficher la sélection de pion
 
 Phase 2 :
 - Ajout escalator/vortex

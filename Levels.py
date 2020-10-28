@@ -8,15 +8,31 @@
 #	- 4 : la case est la sortie associée au joueur 2
 #	- 5 : la case est la sortie associée au joueur 3
 #	- 6 : la case est la sortie associée au joueur 4
+
+
 level = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 3, 0, 0, 0, 1, 0, 0, 4, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-    [0, 0, 1, 0, 2, 2, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-    [0, 0, 1, 0, 2, 2, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 6, 0, 0, 0, 1, 0, 0, 5, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    "ww----wwww---ww",
+    "w(-w--w--w---)w",
+    "www--ww-w----ww",
+    "----ww$-ww---w@",
+    "---------w---w-",
+    "----w-------w--",
+    "----ww--ww--w-w",
+    "----£w-ww-----w",
+    "w]--€w-------[w",
+    "ww-----------ww",
 ]
+
+meanings = {
+    "-": None,
+    "w": "wall",
+    "c": "character",
+    "$": "to steal magicienne",
+    "£": "to steal elfe",
+    "€": "to steal nain",
+    "@": "to steal barbare",
+    "(": "exit magicienne",
+    ")": "exit elfe",
+    "[": "exit nain",
+    "]": "exit barbare",
+}
