@@ -10,11 +10,23 @@ players_input = ("z", "s", "q", "d")
 
 selection_blocked = False
 
+has_stole = False
+
+def check_steal():
+    global has_stole
+    for i in range(len(players_pos)):
+        case = level[players_pos[i][1]][players_pos[i][0]]
+        if meanings[case] != "to steal " + players_name[i]:
+            return None
+
+    has_stole = True
 
 def display():
     """
     Réaffiche tous les éléments à la fenêtre.
     """
+    global has_stole
+
     utk.efface_tout()
     utk.rectangle(0, 0, win_scale_x, win_scale_y, remplissage="black")
     utk.rectangle(0, 0, len(level[0]) * 40, len(level) * 40, remplissage="white")
@@ -24,11 +36,15 @@ def display():
             case_pos = (x * 40 + 20, y * 40 + 20)  # Centre de la position de la case en question
             if meanings[case] is None:
                 pass # Mettre une image à afficher pour le sol
-            elif meanings[case] == "wall":
+            elif meanings[case] == "wall":  # Affichage des murs
                 utk.rectangle(case_pos[0] - 20, case_pos[1] - 20, case_pos[0] + 20, case_pos[1] + 20,
                               remplissage="gray", epaisseur=0)
-            elif "to steal" in meanings[case]:
+            elif "to steal" in meanings[case]:  # Affichage des zones à voler
                 utk.image(case_pos[0], case_pos[1], "sprites/stuff_" + meanings[case].replace("to steal ", "") + ".gif")
+            elif "exit" in meanings[case]:  # Affichage des sorties
+                utk.image(case_pos[0], case_pos[1], "sprites/exit_" + meanings[case].replace("exit ", "") + ".gif")
+                if not has_stole:
+                    utk.image(case_pos[0], case_pos[1], "sprites/X.gif")
 
     for i in range(4):
         utk.image(

@@ -20,6 +20,7 @@ def main():
             selection = selection_change(input, selection)
             move_player(input, selection)
 
+        check_steal()
         display()
 
     utk.ferme_fenetre()
