@@ -24,8 +24,7 @@ def main():
             if input[1] in ("8", "4", "5", "6"):
                 move_player4(input[1])
         display()
-        if input[2] == "ClicGauche":
-            issou()
+
 
 
     utk.ferme_fenetre()

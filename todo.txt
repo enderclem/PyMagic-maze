@@ -1,0 +1,36 @@
+A Faire
+Global :
+- Ajout doctests
+- explication organisation
+- Les problemes rencontrées
+
+Sprites :
+- Les persos
+- Le sablier
+- Case a voler
+- Case Exit
+- Vortex
+- echelle
+- mur plein
+- mur entre cases
+
+Phase 1 :
+- niveau 10x15
+x mouvement des 4 persos
+- recuperation des objets
+- ajout / activation sortie
+- délai de 3 min
+- ajout mode debug
+- Ajout Image
+
+Phase 2 :
+- Ajout escalator/vortex
+- version 2 joueurs
+- ajout murs
+- ajout case
+- ajout case sablier et son effet flip de sablier
+- ajout mode 3 joueurs
+- ajout sélecteur
+
+Phase 3 :
+ - Ajout extensions (on verra ca plus tard)
