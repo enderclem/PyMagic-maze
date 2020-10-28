@@ -5,7 +5,7 @@ Global :
 - Les problemes rencontrées
 
 Sprites :
-- Les persos
+x Les persos
 - Le sablier
 - Case a voler
 - Case Exit
@@ -22,6 +22,7 @@ x mouvement des 4 persos
 - délai de 3 min
 - ajout mode debug
 - Ajout Image
+- Ajout sélecteur de pion
 
 Phase 2 :
 - Ajout escalator/vortex

@@ -4,10 +4,16 @@ from Levels import level
 
 win_scale_x = 600
 win_scale_y = 400
-player_pos1 = (4, 4)
-player_pos2 = (4, 5)
-player_pos3 = (5, 4)
-player_pos4 = (5, 5)
+players = [
+    (4, 4),
+    (4, 5),
+    (5, 4),
+    (5, 5),
+]
+players_input = ("z", "s", "q", "d")
+
+
+selection_blocked = False
 
 def display():
     utk.efface_tout()
@@ -16,13 +22,17 @@ def display():
     for y in range(len(level)):
         for x in range(len(level[y])):
             if level[y][x] == 1:
-                utk.rectangle(x*40+2, y*40+2, (x+1)*40-2, (y+1)*40-2, remplissage="gray", epaisseur=0)
-    utk.image(player_pos1[0]*40+20, player_pos1[1]*40+20, "sprites/magicienne.gif")
-    utk.image(player_pos2[0]*40+20, player_pos2[1]*40+20, "sprites/elfe.gif")
-    utk.image(player_pos3[0]*40+20, player_pos3[1]*40+20, "sprites/nain.gif")
-    utk.image(player_pos4[0]*40+20, player_pos4[1]*40+20, "sprites/barbare.gif")
+                utk.rectangle(x * 40 + 2, y * 40 + 2, (x + 1) * 40 - 2, (y + 1) * 40 - 2, remplissage="gray",
+                              epaisseur=0)
 
-
+    for i in range(4):
+        utk.image(
+            players[i][0] * 40 + 20, players[i][1] * 40 + 20,
+                  "sprites/magicienne.gif" * (i==0) +
+                  "sprites/elfe.gif" * (i==1) +
+                  "sprites/nain.gif" * (i==2) +
+                  "sprites/barbare.gif" * (i==3)
+                  )
 
 def init_game():
     """
@@ -31,59 +41,43 @@ def init_game():
     win = utk.cree_fenetre(win_scale_x, win_scale_y)
     display()
 
-def move_player1(touche):
+
+def move_player(touche, p):
     """
     Bouge le joueur 1 selon la touche indiquée.
-    """
-    global player_pos1
-    vec_move_x = (touche == "d") - (touche == "q")
-    vec_move_y = (touche == "s") - (touche == "z")
-    new_pos = (player_pos1[0] + vec_move_x, player_pos1[1] + vec_move_y)
 
-    if -1<new_pos[1]<len(level) and -1<new_pos[0]<len(level[0]) and level[new_pos[1]][new_pos[0]] not in (1, 2):
-        level[player_pos1[1]][player_pos1[0]] = 0
+    :param string touche: touche du clavier appuyé
+    :param int p: numéro du joueur
+    """
+    global players
+    global players_input
+    pla = players[p] # Création d'un raccourci pour appeler la position du personnage
+
+    vec_move_x = (touche == players_input[3]) - (touche == players_input[2])
+    vec_move_y = (touche == players_input[1]) - (touche == players_input[0])
+    new_pos = (pla[0] + vec_move_x, pla[1] + vec_move_y)
+
+    if -1 < new_pos[1] < len(level) and -1 < new_pos[0] < len(level[0]) and level[new_pos[1]][new_pos[0]] not in (1, 2):
+        level[pla[1]][pla[0]] = 0
         level[new_pos[1]][new_pos[0]] = 2
-        player_pos1 = new_pos
+        players[p] = new_pos
 
-def move_player2(touche):
+
+def selection_change(touche, actual_selection):
     """
-    Bouge le joueur 2 selon la touche indiquée.
+    Change la sélection du pion.
+
+    :param string input: Valeur de la touche appuyé
+    :param int actual_selection: Numéro du pion actuellement sélectionné
+    :return: retourne la nouvelle valeur du pion séléctionné
     """
-    global player_pos2
-    vec_move_x = (touche == "m") - (touche == "k")
-    vec_move_y = (touche == "l") - (touche == "o")
-    new_pos = (player_pos2[0] + vec_move_x, player_pos2[1] + vec_move_y)
+    global selection_blocked
+    if touche == "v":
+        selection_blocked = not selection_blocked
 
-    if -1<new_pos[1]<len(level) and -1<new_pos[0]<len(level[0]) and level[new_pos[1]][new_pos[0]] not in (1, 2):
-        level[player_pos2[1]][player_pos2[0]] = 0
-        level[new_pos[1]][new_pos[0]] = 2
-        player_pos2 = new_pos
+    if touche == "e" and not selection_blocked:
+        actual_selection += 1
+        if actual_selection > 3:
+            actual_selection = 0
 
-def move_player3(touche):
-    """
-    Bouge le joueur 3 selon la touche indiquée.
-    """
-    global player_pos3
-    vec_move_x = (touche == "Right") - (touche == "Left")
-    vec_move_y = (touche == "Down") - (touche == "Up")
-    new_pos = (player_pos3[0] + vec_move_x, player_pos3[1] + vec_move_y)
-
-    if -1<new_pos[1]<len(level) and -1<new_pos[0]<len(level[0]) and level[new_pos[1]][new_pos[0]] not in (1, 2):
-        level[player_pos3[1]][player_pos3[0]] = 0
-        level[new_pos[1]][new_pos[0]] = 2
-        player_pos3 = new_pos
-
-def move_player4(touche):
-    """
-    Bouge le joueur 4 selon la touche indiquée.
-    """
-    global player_pos4
-    vec_move_x = (touche == "6") - (touche == "4")
-    vec_move_y = (touche == "5") - (touche == "8")
-    new_pos = (player_pos4[0] + vec_move_x, player_pos4[1] + vec_move_y)
-
-    if -1<new_pos[1]<len(level) and -1<new_pos[0]<len(level[0]) and level[new_pos[1]][new_pos[0]] not in (1, 2):
-        level[player_pos4[1]][player_pos4[0]] = 0
-        level[new_pos[1]][new_pos[0]] = 2
-        player_pos4 = new_pos
-
+    return actual_selection
