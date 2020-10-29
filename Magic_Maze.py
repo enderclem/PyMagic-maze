@@ -2,17 +2,17 @@
 from MagPy import *
 import upemtk as utk
 import doctest
-
+import display
 
 def main():
     selection = 0
 
-    init_game()
+    display.init_game()
 
     playing = True
     while playing:
         input = utk.attente_touche(100)
-        print(input)
+        # print(input)
 
         if input is not None:
             if input == "Escape":
@@ -21,7 +21,7 @@ def main():
             move_player(input, selection)
 
         check_steal()
-        display()
+        check_exit()
 
     utk.ferme_fenetre()
 

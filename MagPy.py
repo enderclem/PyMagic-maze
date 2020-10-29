@@ -1,64 +1,34 @@
-# On définit les fonctions ici.
-import upemtk as utk
-from Levels import level, meanings
+# Contient les fonctions calculatoires.
 
-win_scale_x = 600
-win_scale_y = 400
-players_name = ("magicienne", "elfe", "nain", "barbare")
-players_pos = [(6, 4), (6, 5), (7, 4), (7, 5)]
+import upemtk as utk
+from levels import *
+import display
+
 players_input = ("z", "s", "q", "d")
 
 selection_blocked = False
 
-has_stole = False
+has_stolen = False
 
 def check_steal():
-    global has_stole
+    global has_stolen
     for i in range(len(players_pos)):
         case = level[players_pos[i][1]][players_pos[i][0]]
         if meanings[case] != "to steal " + players_name[i]:
             return None
 
-    has_stole = True
+    has_stolen = True
+    display.open_exit()
 
-def display():
-    """
-    Réaffiche tous les éléments à la fenêtre.
-    """
-    global has_stole
+def check_exit():
+    global has_stolen
+    if has_stolen:
+        for i in range(len(players_pos)):
+            case = level[players_pos[i][1]][players_pos[i][0]]
+            if meanings[case] != "exit " + players_name[i]:
+                return None
 
-    utk.efface_tout()
-    utk.rectangle(0, 0, win_scale_x, win_scale_y, remplissage="black")
-    utk.rectangle(0, 0, len(level[0]) * 40, len(level) * 40, remplissage="white")
-    for y in range(len(level)):
-        for x in range(len(level[y])):
-            case = level[y][x]  # Récupération de la valeur la case en question
-            case_pos = (x * 40 + 20, y * 40 + 20)  # Centre de la position de la case en question
-            if meanings[case] is None:
-                pass # Mettre une image à afficher pour le sol
-            elif meanings[case] == "wall":  # Affichage des murs
-                utk.rectangle(case_pos[0] - 20, case_pos[1] - 20, case_pos[0] + 20, case_pos[1] + 20,
-                              remplissage="gray", epaisseur=0)
-            elif "to steal" in meanings[case]:  # Affichage des zones à voler
-                utk.image(case_pos[0], case_pos[1], "sprites/stuff_" + meanings[case].replace("to steal ", "") + ".gif")
-            elif "exit" in meanings[case]:  # Affichage des sorties
-                utk.image(case_pos[0], case_pos[1], "sprites/exit_" + meanings[case].replace("exit ", "") + ".gif")
-                if not has_stole:
-                    utk.image(case_pos[0], case_pos[1], "sprites/X.gif")
-
-    for i in range(4):
-        utk.image(
-            players_pos[i][0] * 40 + 20,
-            players_pos[i][1] * 40 + 20,
-            "sprites/" + players_name[i] + ".gif")
-
-
-def init_game():
-    """
-    Charge la fenetre et tout ce qui faut pour le jeu.
-    """
-    win = utk.cree_fenetre(win_scale_x, win_scale_y)
-    display()
+        display.display_win()
 
 
 def move_player(touche, p):
@@ -81,6 +51,7 @@ def move_player(touche, p):
             and new_pos not in players_pos:
         players_pos[p] = new_pos
 
+    display.display_player(p)
 
 def selection_change(touche, actual_selection):
     """

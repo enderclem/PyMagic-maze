@@ -16,13 +16,13 @@ x Les persos
 - sol
 
 Phase 1 :
-- niveau 10x15
+x niveau 10x15
 x mouvement des 4 persos
-- recuperation des objets
+x recuperation des objets
 - ajout / activation sortie
 - délai de 3 min
 - ajout mode debug
-- Ajout Image
+x Ajout Image
 x Ajout sélecteur de pion
 - Afficher la sélection de pion
 
