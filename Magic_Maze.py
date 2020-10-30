@@ -4,8 +4,12 @@ import upemtk as utk
 import doctest
 import display
 import levels as lvl
+import random
 
 def main():
+    debug_mode = False
+    all_input = ("z", "q", "s", "d", "e", "v", None)
+
     selection = 0
 
     display.init_game()
@@ -13,11 +17,19 @@ def main():
     playing = True
     while playing:
         input = utk.attente_touche(100)
-        # print(input)
+
+        if input == "Escape":
+            playing = False  # arret du programme
+
+        ##### Parti debug #####
+        if input == "F1":
+            debug_mode = not debug_mode
+        if debug_mode:
+            input = all_input[random.randint(0, len(all_input) - 1)]
+        print(input)
+        ##### Fin parti debug #####
 
         if input is not None:
-            if input == "Escape":
-                playing = False  # arret du programme
             selection = selection_change(input, selection)
             move_player(input, selection)
 

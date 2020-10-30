@@ -20,11 +20,12 @@ x niveau 10x15
 x mouvement des 4 persos
 x recuperation des objets
 x ajout / activation sortie
-- délai de 3 min
-- ajout mode debug
+x délai de 3 min
+x ajout mode debug
 x Ajout Image
 x Ajout sélecteur de pion
 - Afficher la sélection de pion
+- Faire une UNIQUE sortie
 
 Phase 2 :
 - Ajout escalator/vortex

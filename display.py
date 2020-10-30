@@ -79,7 +79,13 @@ def display_player(p):
 
 def display_timer():
     utk.efface("timer")
-    utk.texte(300, 20, "temps restants : " + str(int(lvl.time_left) // 60) + "min" + str(int(lvl.time_left % 60)) + "s",
+    utk.texte(300, 15, "temps restants",
+              couleur="black",
+              ancrage="center",
+              police="Purisa",
+              taille="20",
+              tag="timer")
+    utk.texte(300, 45,str(int(lvl.time_left) // 60) + "min" + str(int(lvl.time_left % 60)) + "s",
               couleur="black",
               ancrage="center",
               police="Purisa",
