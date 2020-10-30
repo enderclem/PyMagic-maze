@@ -3,6 +3,7 @@ from MagPy import *
 import upemtk as utk
 import doctest
 import display
+import levels as lvl
 
 def main():
     selection = 0
@@ -20,9 +21,13 @@ def main():
             selection = selection_change(input, selection)
             move_player(input, selection)
 
+        display.display_timer()
         check_steal()
-        check_exit()
 
+        if check_exit() or update_time():
+            break
+
+    end_game()
     utk.ferme_fenetre()
 
 

@@ -2,6 +2,8 @@
 
 players_name = ("magicienne", "elfe", "nain", "barbare")
 players_pos = [(6, 4), (6, 5), (7, 4), (7, 5)]
+max_time = 180.0
+time_left = max_time
 
 # Matrice du niveau
 level = [
