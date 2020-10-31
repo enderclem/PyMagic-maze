@@ -115,4 +115,5 @@ def selection_change(touche, actual_selection):
         if actual_selection > 3:
             actual_selection = 0
 
+    display.display_selected(420, 10, actual_selection, selection_blocked)
     return actual_selection

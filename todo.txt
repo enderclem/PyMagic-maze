@@ -24,7 +24,8 @@ x délai de 3 min
 x ajout mode debug
 x Ajout Image
 x Ajout sélecteur de pion
-- Afficher la sélection de pion
+x Afficher la sélection de pion
+- retirer les pions apres la sortie et bloquer leur sélection apres
 - Faire une UNIQUE sortie
 
 Phase 2 :

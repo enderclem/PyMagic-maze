@@ -50,6 +50,8 @@ def display_all():
     for i in range(4):
         display_player(i)
 
+    display_selected(420, 10, 0, False)
+
     utk.mise_a_jour()
 
 
@@ -73,6 +75,29 @@ def display_player(p):
         "sprites/" + players_name[p] + ".gif",
         tag=players_name[p]
     )
+
+    utk.mise_a_jour()
+
+
+def display_selected(x, y, selected, is_blocked):
+    utk.efface("selection")
+
+    color_selected = ""
+    if is_blocked:
+        color_selected = "red"
+    else:
+        color_selected = "cyan"
+
+    for i in range(4):
+        utk.rectangle(x+i*40, y, x+(i+1)*40, y+40,
+                      couleur="black",
+                      remplissage=color_selected * (selected == i),
+                      epaisseur=2,
+                      tag="selection")
+        utk.image(
+            x+i*40+20, y+20,
+            "sprites/" + players_name[i] + ".gif",
+            tag="selection")
 
     utk.mise_a_jour()
 
