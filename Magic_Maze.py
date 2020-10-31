@@ -8,7 +8,7 @@ import random
 
 def main():
     debug_mode = False
-    all_input = ("z", "q", "s", "d", "e", "v", None)
+    all_input = ("z", "q", "s", "d", "b", "n", None)
 
     selection = 0
 

@@ -107,10 +107,10 @@ def selection_change(touche, actual_selection):
     :return: retourne la nouvelle valeur du pion séléctionné
     """
     global selection_blocked
-    if touche == "v":
+    if touche == "n":
         selection_blocked = not selection_blocked
 
-    if touche == "e" and not selection_blocked:
+    if touche == "b" and not selection_blocked:
         actual_selection += 1
         if actual_selection > 3:
             actual_selection = 0

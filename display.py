@@ -5,7 +5,7 @@ from levels import *
 import levels as lvl
 
 win_scale_x = 600
-win_scale_y = 500
+win_scale_y = 520
 win_level_pos = (0, 60)  # Donne la position du coin supérieur gauche de l'affichage du niveau
 
 def display_all():
@@ -49,10 +49,17 @@ def display_all():
 
     for i in range(4):
         display_player(i)
-
     display_selected(420, 10, 0, False)
+    display_command(10, 460, 12)
 
     utk.mise_a_jour()
+
+def display_command(x, y, size):
+    utk.texte(x, y,
+              """Déplacement : Z,Q,S,D
+Sélection : B (pour changer), N (Pour verrouiller)
+Mode Debug : F1""",
+              taille=size)
 
 
 def display_lose():
