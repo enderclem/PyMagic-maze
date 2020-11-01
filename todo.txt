@@ -30,10 +30,11 @@ Phase 2 :
 - Ajout escalator/vortex
 - version 2 joueurs
 - ajout murs
-- ajout case
 - ajout case sablier et son effet flip de sablier
 - ajout mode 3 joueurs
 - ajout sélecteur
 
 Phase 3 :
- - Ajout extensions (on verra ca plus tard)
+- ajout exploration(OOF)
+- Ajout extension garde
+- ajout extensions au choix
