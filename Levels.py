@@ -7,22 +7,22 @@ time_left = max_time
 
 # Matrice du niveau
 level = [
-    "ww....wwww...ww",
-    "w(.w..w..w...)w",
-    "www..ww.w....ww",
-    "....ww$€ww...w.",
-    ".........w...w.",
-    "....w.......w..",
-    "....ww£@ww..w.w",
-    ".....w.ww.....w",
-    "w]...w.......[w",
-    "ww...........ww",
+    "##....####...##",
+    "#(.#..#..#...)#",
+    "###..##.#....##",
+    "....##$€##...#.",
+    ".........#...#.",
+    "....#.......#..",
+    "....##£@##..#.#",
+    ".....#.##.....#",
+    "#]...#.......[#",
+    "##...........##",
 ]
 
 # Description de tout les symboles du niveau
 meanings = {
     ".": "None",
-    "w": "wall",
+    "#": "wall",
     "c": "character",
     "$": "to steal magicienne",
     "£": "to steal elfe",
