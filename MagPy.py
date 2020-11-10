@@ -74,7 +74,7 @@ def move_player(touche, p):
     new_pos = (pla[0] + vec_move_x, pla[1] + vec_move_y)
 
     if -1 < new_pos[1] < len(lvl.level) and -1 < new_pos[0] < len(lvl.level[0]) \
-            and lvl.level[new_pos[1]][new_pos[0]] != "w" \
+            and lvl.level[new_pos[1]][new_pos[0]] != "#" \
             and new_pos not in lvl.players_pos:
         lvl.players_pos[p] = new_pos
 
