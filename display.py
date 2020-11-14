@@ -42,10 +42,17 @@ def display_all():
                           "sprites/X.gif",
                           tag="closed")
 
+    # Deuxième boucle identique à la première pour que les murs
+    # soient chargés en dernier, au dessus des autres sprites
+    for y in range(len(level)):
+        for x in range(len(level[y])):
+            case = level[y][x]
+            case_pos = (x * 40 + 20 + win_level_pos[0], y * 40 + 20 + win_level_pos[1])
+            
             # Affichage des murs
             if meanings[case] == "wall":
-                utk.rectangle(case_pos[0] - 20, case_pos[1] - 20, case_pos[0] + 20, case_pos[1] + 20,
-                              remplissage="gray", epaisseur=0)
+                utk.image(case_pos[0], case_pos[1], "sprites/wall.gif")
+
 
     for i in range(4):
         display_player(i)

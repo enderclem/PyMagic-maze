@@ -16,7 +16,7 @@ def main():
 
     playing = True
     while playing:
-        input = utk.attente_touche(100)
+        input = utk.attente_touche(10)
 
         if input == "Escape":
             playing = False  # arret du programme
