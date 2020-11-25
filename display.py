@@ -1,7 +1,7 @@
 # Contient toutes les fonctions d'affichages.
 
 import upemtk as utk
-from levels import *
+from levels import * # Importation en double à régler
 import levels as lvl
 
 win_scale_x = 600
@@ -15,11 +15,53 @@ def display_all():
     global has_stole
 
     utk.efface_tout()
-    # utk.rectangle(0, 0, win_scale_x, win_scale_y, remplissage="black")
-    # utk.rectangle(0, 0, len(level[0]) * 40, len(level) * 40, remplissage="white")
-    for y in range(len(level)):
-        for x in range(len(level[y])):
-            case = level[y][x]  # Récupération de la valeur la case en question
+
+    display_cases()
+    display_between_cases()
+
+    for i in range(4):
+        display_player(i)
+    display_selected(420, 10, 0, False)
+    display_command(10, 460, 12)
+
+    utk.mise_a_jour()
+
+def display_between_cases():
+
+    for yy in range(0, len(level), 2):
+        for xx in range(1, len(level[yy]), 2):
+            y=yy//2 # Calcul du numéro de la case
+            x=xx//2
+            case = level[yy][xx]  # Récupération de la valeur la case en question
+
+            # Centre de la position de la case en question
+            case_pos = (x * 40 + 20 + win_level_pos[0], y * 40 + win_level_pos[1])
+
+            # Affichage des murs
+            if meanings[case] == "wall":
+                utk.image(case_pos[0], case_pos[1], "sprites/wall_horizontal.gif")
+
+    for yy in range(1, len(level), 2):
+        for xx in range(0, len(level[yy]), 2):
+            y=yy//2 # Calcul du numéro de la case
+            x=xx//2
+            case = level[yy][xx]  # Récupération de la valeur la case en question
+
+            # Centre de la position de la case en question
+            case_pos = (x * 40 + win_level_pos[0], y * 40 + 20 + win_level_pos[1])
+
+            # Affichage des murs
+            if meanings[case] == "wall":
+                utk.image(case_pos[0], case_pos[1], "sprites/wall_vertical.gif")
+
+
+def display_cases():
+
+    for yy in range(1, len(level), 2):
+        for xx in range(1, len(level[yy]), 2):
+            y=yy//2 # Calcul du numéro de la case
+            x=xx//2
+            case = level[yy][xx]  # Récupération de la valeur la case en question
 
             # Centre de la position de la case en question
             case_pos = (x * 40 + 20 + win_level_pos[0], y * 40 + 20 + win_level_pos[1])
@@ -44,22 +86,18 @@ def display_all():
 
     # Deuxième boucle identique à la première pour que les murs
     # soient chargés en dernier, au dessus des autres sprites
-    for y in range(len(level)):
-        for x in range(len(level[y])):
-            case = level[y][x]
+    for yy in range(1, len(level), 2):
+        for xx in range(1, len(level[yy]), 2):
+            y=yy//2 # Calcul du numéro de la case
+            x=xx//2
+            case = level[yy][xx]  # Récupération de la valeur la case en question
+
             case_pos = (x * 40 + 20 + win_level_pos[0], y * 40 + 20 + win_level_pos[1])
             
             # Affichage des murs
             if meanings[case] == "wall":
                 utk.image(case_pos[0], case_pos[1], "sprites/wall.gif")
 
-
-    for i in range(4):
-        display_player(i)
-    display_selected(420, 10, 0, False)
-    display_command(10, 460, 12)
-
-    utk.mise_a_jour()
 
 def display_command(x, y, size):
     utk.texte(x, y,
@@ -84,8 +122,8 @@ def display_player(p):
     utk.efface(players_name[p])
 
     utk.image(
-        players_pos[p][0] * 40 + 20 + win_level_pos[0],
-        players_pos[p][1] * 40 + 20 + win_level_pos[1],
+        players_pos[p][0]//2 * 40 + 20 + win_level_pos[0],
+        players_pos[p][1]//2 * 40 + 20 + win_level_pos[1],
         "sprites/" + players_name[p] + ".gif",
         tag=players_name[p]
     )

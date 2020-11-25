@@ -11,20 +11,26 @@ has_stolen = False
 last_frame_time = time.time()
 reason_stop = "quit"  # Contient une variable pour décider de quoi faire après la fin de la boucle principale
 
-def check_steal():
+def check_collision(last_pos, new_pos):
+    """
+    Renvoie True si le personnage peut aller à la nouvelle position indiquée.
     """
 
-    :return:
-    """
-    global has_stolen
+    if -1 < new_pos[1] < len(lvl.level) and -1 < new_pos[0] < len(lvl.level[0]): # Vérifie leslimites du terrain
 
-    for i in range(len(lvl.players_pos)):
-        case = lvl.level[lvl.players_pos[i][1]][lvl.players_pos[i][0]]
-        if lvl.meanings[case] != "to steal " + lvl.players_name[i]:
-            return None
+        direction=((new_pos[0]-last_pos[0])//2, (new_pos[1]-last_pos[1])//2)
+        # Pour après vérifier si la nouvelle position se trouve dans un mur
+        case_target=lvl.meanings[lvl.level[new_pos[1]][new_pos[0]]]
+        # Pour vérifier si on essaie de passer par un mur
+        trajectory_target=lvl.meanings[lvl.level[last_pos[1]+direction[1]][last_pos[0]+direction[0]]]
 
-    has_stolen = True
-    display.open_exit()
+        if case_target != "wall" \
+        and new_pos not in lvl.players_pos \
+        and trajectory_target != "wall":
+            return True
+
+    return False    
+
 
 def check_exit():
     """
@@ -42,6 +48,21 @@ def check_exit():
 
         reason_stop = "win"
         return True
+
+def check_steal():
+    """
+
+    :return:
+    """
+    global has_stolen
+
+    for i in range(len(lvl.players_pos)):
+        case = lvl.level[lvl.players_pos[i][1]][lvl.players_pos[i][0]]
+        if lvl.meanings[case] != "to steal " + lvl.players_name[i]:
+            return None
+
+    has_stolen = True
+    display.open_exit()
 
 def end_game():
     global reason_stop
@@ -69,16 +90,15 @@ def move_player(touche, p):
     global players_input
     pla = lvl.players_pos[p]  # Création d'un raccourci pour appeler la position du personnage
 
-    vec_move_x = (touche == players_input[3]) - (touche == players_input[2])
-    vec_move_y = (touche == players_input[1]) - (touche == players_input[0])
+    vec_move_x = (touche == players_input[3])*2 - (touche == players_input[2])*2
+    vec_move_y = (touche == players_input[1])*2 - (touche == players_input[0])*2
     new_pos = (pla[0] + vec_move_x, pla[1] + vec_move_y)
 
-    if -1 < new_pos[1] < len(lvl.level) and -1 < new_pos[0] < len(lvl.level[0]) \
-            and lvl.meanings[lvl.level[new_pos[1]][new_pos[0]]] != "wall" \
-            and new_pos not in lvl.players_pos:
+    if check_collision(pla, new_pos):
         lvl.players_pos[p] = new_pos
 
     display.display_player(p)
+
 
 def update_time():
     """
