@@ -6,7 +6,6 @@ import display
 import time
 
 players_input = ("z", "s", "q", "d")
-selection_blocked = False
 has_stolen = False
 last_frame_time = time.time()
 reason_stop = "quit"  # Contient une variable pour décider de quoi faire après la fin de la boucle principale
@@ -65,6 +64,9 @@ def check_steal():
     display.open_exit()
 
 def end_game():
+    """
+    Définit ce qui doit être affiché après avoir quitter le jeu. 
+    """
     global reason_stop
 
     if reason_stop == "quit":
@@ -126,14 +128,10 @@ def selection_change(touche, actual_selection):
     :param int actual_selection: Numéro du pion actuellement sélectionné
     :return: retourne la nouvelle valeur du pion séléctionné
     """
-    global selection_blocked
-    if touche == "n":
-        selection_blocked = not selection_blocked
-
-    if touche == "b" and not selection_blocked:
+    if touche == "b":
         actual_selection += 1
         if actual_selection > 3:
             actual_selection = 0
 
-    display.display_selected(420, 10, actual_selection, selection_blocked)
+    display.display_selected(420, 10, actual_selection)
     return actual_selection

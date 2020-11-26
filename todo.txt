@@ -29,7 +29,7 @@ x Afficher la sélection de pion
 Phase 2 :
 - Ajout escalator/vortex
 - version 2 joueurs
-- ajout murs
+x ajout murs
 - ajout case sablier et son effet flip de sablier
 - ajout mode 3 joueurs
 - ajout sélecteur

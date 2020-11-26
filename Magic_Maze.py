@@ -5,21 +5,41 @@ import doctest
 import display
 import levels as lvl
 import random
+import menu
+
+in_menu = True
+playing = True
 
 def main():
+    # Initialisation
+    global in_menu, playing
+
     debug_mode = False
     all_input = ("z", "q", "s", "d", "b", "n", None)
 
     selection = 0
 
     display.init_game()
+    display.init_menu()
 
-    playing = True
+    # Boucle du menu
+    while in_menu:
+        input = utk.attente_touche_jusqua(500)
+
+        print(input)
+
+        in_menu=menu.main_menu(input)
+
+        exit_game(input)
+
+
+    display.display_all_level()
+
+    # Boucle de jeu
     while playing:
-        input = utk.attente_touche_jusqua(10)
+        input = utk.attente_touche_jusqua(20)
 
-        if input == "Escape":
-            playing = False  # arret du programme
+        exit_game(input)
 
         ##### Parti debug #####
         if input == "F1":
@@ -41,6 +61,15 @@ def main():
 
     end_game()
     utk.ferme_fenetre()
+
+def exit_game(input):
+    global in_menu
+    global playing
+
+    if input == "Escape" or menu.confirm_exit(input):
+        in_menu = False
+        playing = False  # arret du programme
+
 
 
 if __name__ == '__main__':
