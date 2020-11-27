@@ -3,6 +3,7 @@ Global :
 - Ajout doctests
 - explication organisation
 - Les problemes rencontrées
+- bug ram qui casse les ********
 
 Sprites :
 x Les persos
@@ -36,5 +37,7 @@ x ajout murs
 
 Phase 3 :
 - ajout exploration(OOF)
+(action explorer, stockage/lecture des cartes, ajout sur le terrain)
 - Ajout extension garde
 - ajout extensions au choix
+

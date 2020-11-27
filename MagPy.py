@@ -5,10 +5,10 @@ import levels as lvl
 import display
 import time
 
-players_input = ("z", "s", "q", "d")
 has_stolen = False
 last_frame_time = time.time()
 reason_stop = "quit"  # Contient une variable pour décider de quoi faire après la fin de la boucle principale
+
 
 def check_collision(last_pos, new_pos):
     """
@@ -24,7 +24,7 @@ def check_collision(last_pos, new_pos):
         trajectory_target=lvl.meanings[lvl.level[last_pos[1]+direction[1]][last_pos[0]+direction[0]]]
 
         if case_target != "wall" \
-        and new_pos not in lvl.players_pos \
+        and new_pos not in lvl.pion_pos \
         and trajectory_target != "wall":
             return True
 
@@ -40,9 +40,9 @@ def check_exit():
     global reason_stop
 
     if has_stolen:
-        for i in range(len(lvl.players_pos)):
-            case = lvl.level[lvl.players_pos[i][1]][lvl.players_pos[i][0]]
-            if lvl.meanings[case] != "exit " + lvl.players_name[i]:
+        for i in range(len(lvl.pion_pos)):
+            case = lvl.level[lvl.pion_pos[i][1]][lvl.pion_pos[i][0]]
+            if lvl.meanings[case] != "exit " + lvl.pion_name[i]:
                 return False
 
         reason_stop = "win"
@@ -55,9 +55,9 @@ def check_steal():
     """
     global has_stolen
 
-    for i in range(len(lvl.players_pos)):
-        case = lvl.level[lvl.players_pos[i][1]][lvl.players_pos[i][0]]
-        if lvl.meanings[case] != "to steal " + lvl.players_name[i]:
+    for i in range(len(lvl.pion_pos)):
+        case = lvl.level[lvl.pion_pos[i][1]][lvl.pion_pos[i][0]]
+        if lvl.meanings[case] != "to steal " + lvl.pion_name[i]:
             return None
 
     has_stolen = True
@@ -81,25 +81,58 @@ def end_game():
     time.sleep(1)
     utk.attente_clic_ou_touche()
 
-def move_player(touche, p):
+
+def player_choose(input):
+    """
+    Gère l'action à axécuter en fonction de la touche appuyée
+    """
+    for p in range(lvl.nbr_of_player):
+        contr=lvl.controller[p]
+        if input in contr.keys():
+            mean=contr[input]
+
+            if "select player" in mean:
+                selection_delta=int(mean.replace("select player ", ""))
+                lvl.selected_pion[p]+=selection_delta
+                if lvl.selected_pion[p]>3:
+                    lvl.selected_pion[p]=0
+                elif lvl.selected_pion[p]<0:
+                    lvl.selected_pion[p]=3
+
+            elif "select action" in mean:
+                selection_delta=int(mean.replace("select action ", ""))
+                lvl.selected_act[p]+=selection_delta
+                if lvl.selected_act[p]>=len(lvl.players_act[p]):
+                    lvl.selected_act[p]=0
+                elif lvl.selected_act[p]<0:
+                    lvl.selected_act[p]=len(lvl.players_act[p])-1
+
+            elif mean=="do action":
+                player_act(p)
+
+
+def player_act(p):
+    """
+    Exécute l'action sélectionnée du joueur en question.
+    """
+    action=lvl.players_act[p][lvl.selected_act[p]]
+    if "go" in action:
+        player_move(action.replace("go_", ""), lvl.selected_pion[p])
+    # Ajouter ici si l'action est un vortex, escalator...
+
+
+def player_move(direction, pion):
     """
     Bouge le joueur 1 selon la touche indiquée.
-
-    :param string touche: touche du clavier appuyé
-    :param int p: numéro du joueur
     """
-    global players
-    global players_input
-    pla = lvl.players_pos[p]  # Création d'un raccourci pour appeler la position du personnage
+    pion_pos = lvl.pion_pos[pion]  # Création d'un raccourci pour appeler la position du personnage
 
-    vec_move_x = (touche == players_input[3])*2 - (touche == players_input[2])*2
-    vec_move_y = (touche == players_input[1])*2 - (touche == players_input[0])*2
-    new_pos = (pla[0] + vec_move_x, pla[1] + vec_move_y)
+    vec_move_x = (direction == "right")*2 - (direction == "left")*2
+    vec_move_y = (direction == "down")*2 - (direction == "up")*2
+    new_pos = (pion_pos[0] + vec_move_x, pion_pos[1] + vec_move_y)
 
-    if check_collision(pla, new_pos):
-        lvl.players_pos[p] = new_pos
-
-    display.display_player(p)
+    if check_collision(pion_pos, new_pos):
+        lvl.pion_pos[pion] = new_pos
 
 
 def update_time():
@@ -133,5 +166,5 @@ def selection_change(touche, actual_selection):
         if actual_selection > 3:
             actual_selection = 0
 
-    display.display_selected(420, 10, actual_selection)
+    # display.display_selected_pion(5, 140, actual_selection)
     return actual_selection

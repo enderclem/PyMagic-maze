@@ -4,9 +4,9 @@ import upemtk as utk
 from levels import * # Importation en double à régler
 import levels as lvl
 
-win_size = (900, 720)
-level_pos = (0, 60)  # Donne la position du coin supérieur gauche de l'affichage du niveau
-level_size = (900, 600)
+win_size = (1200, 680)
+level_pos = (120, 20)  # Donne la position du coin supérieur gauche de l'affichage du niveau
+level_size = (960, 640)
 
 def display_all_level():
     """
@@ -16,8 +16,8 @@ def display_all_level():
 
     utk.efface_tout()
 
-    utk.rectangle(level_pos[0], level_pos[1], 
-                  level_pos[0]+level_size[0], level_pos[1]+level_size[1],
+    utk.rectangle(level_pos[0]-20, level_pos[1]-20, 
+                  level_pos[0]+level_size[0]+20, level_pos[1]+level_size[1]+20,
                   couleur="black",
                   remplissage="black",
                   epaisseur=0,
@@ -28,7 +28,7 @@ def display_all_level():
 
     for i in range(4):
         display_player(i)
-    display_selected(420, 10, 0)
+    display_selected_game()
     display_command(10, 460, 12)
 
     utk.mise_a_jour()
@@ -113,6 +113,13 @@ Sélection : B (pour changer), N (Pour verrouiller)
 Mode Debug : F1""",
               taille=size)
 
+def display_frame():
+    for i in range(4):
+        display_player(i)
+
+    display_timer(x=0, y=0)
+    display_selected_game()
+
 
 def display_lose():
     utk.texte(win_size[0]/2, win_size[1]/2, "Vous avez perdu...",
@@ -126,54 +133,88 @@ def display_player(p):
     Réaffiche le pion indiqué.
     :param int p: numéro du pion
     """
-    utk.efface(players_name[p])
+    utk.efface(pion_name[p])
 
     utk.image(
-        players_pos[p][0]//2 * 40 + 20 + level_pos[0],
-        players_pos[p][1]//2 * 40 + 20 + level_pos[1],
-        "sprites/" + players_name[p] + ".gif",
-        tag=players_name[p]
+        pion_pos[p][0]//2 * 40 + 20 + level_pos[0],
+        pion_pos[p][1]//2 * 40 + 20 + level_pos[1],
+        "sprites/" + pion_name[p] + ".gif",
+        tag=pion_name[p]
     )
 
-    utk.mise_a_jour()
+
+def display_selected_game():
+    """
+    Affiche toutes les sélections en jeu.
+    """
+    for i in range(lvl.nbr_of_player):
+        # Calcul des position d'affichage
+        x = 5 + (level_pos[0] + level_size[0] + 20) * (i%2)
+        y = 180 + 250 * (i>=2)
+        
+        display_selected_pion(x, y, lvl.selected_pion[i], i)
+        display_selected_action(x+50, y, lvl.selected_act[i], lvl.players_act[i], i)
 
 
-def display_selected(x, y, selected):
-    utk.efface("selection")
+def display_selected_pion(x, y, select_value, player_num=-1):
+    """
+    Affiche le pion sélectionné en jeu.
+    """
+    tag_name="select_p" + str(player_num)
+    utk.efface(tag_name)
 
     for i in range(4):
-        utk.rectangle(x+i*40, y, x+(i+1)*40, y+40,
+        utk.rectangle(x, y+i*40, x+40, y+(i+1)*40,
                       couleur="black",
-                      remplissage="cyan" * (i==selected),
+                      remplissage="cyan" * (i==select_value),
                       epaisseur=2,
-                      tag="selection")
+                      tag=tag_name)
         utk.image(
-            x+i*40+20, y+20,
-            "sprites/" + players_name[i] + ".gif",
-            tag="selection")
-
-    utk.mise_a_jour()
+            x+20, y+i*40+20,
+            "sprites/" + pion_name[i] + ".gif",
+            tag=tag_name)
 
 
-def display_timer():
+def display_selected_action(x, y, select_value, list_actions, player_num=-1):
+    """
+    Affiche le pion sélectionné en jeu.
+    """
+    tag_name="select_a" + str(player_num)
+    utk.efface(tag_name)
+
+    for i in range(len(list_actions)):
+        utk.rectangle(x, y+i*40, x+40, y+(i+1)*40,
+                      couleur="black",
+                      remplissage="cyan" * (i==select_value),
+                      epaisseur=2,
+                      tag=tag_name)
+        utk.image(
+            x+20, y+i*40+20,
+            "sprites/" + list_actions[i] + ".gif",
+            tag=tag_name)
+
+
+def display_timer(x, y):
+    """
+    Affiche le timer. Ne le met pas à jour.
+    """
     utk.efface("timer")
-    utk.texte(300, 15, "temps restants",
-              couleur="black",
-              ancrage="center",
-              police="Purisa",
-              taille="20",
-              tag="timer")
-    utk.texte(300, 45,str(int(lvl.time_left) // 60) + "min" + str(int(lvl.time_left % 60)) + "s",
-              couleur="black",
-              ancrage="center",
-              police="Purisa",
-              taille="20",
-              tag="timer")
 
-    utk.mise_a_jour()
+    utk.image(x+50, y+50,
+              "sprites/hourglass.gif",
+              tag="timer")
+    utk.texte(x+50, y+110,str(int(lvl.time_left) // 60) + ":" + str(int(lvl.time_left % 60)),
+              couleur="black",
+              ancrage="center",
+              police="Purisa",
+              taille=28,
+              tag="timer")
 
 
 def display_win():
+    """
+    Affiche 'Vous avez gagné !'
+    """
     utk.texte(win_size[0]/2, win_size[1]/2, "Vous avez gagné !",
               ancrage="center")
 
@@ -182,7 +223,7 @@ def display_win():
 
 def init_game():
     """
-    Charge la fenetre et tout ce qui faut pour le jeu.
+    Charge la fenetre.
     """
     utk.cree_fenetre(win_size[0], win_size[1])
 
@@ -190,13 +231,13 @@ def init_game():
 def open_exit():
     utk.efface("closed")
 
-    utk.mise_a_jour()
-
-
 
 #################### MENU ####################
 
 def init_menu():
+    """
+    Initialise le menu
+    """
     utk.rectangle(0, 0, win_size[0], win_size[1],
                   couleur="black",
                   remplissage="black",
@@ -211,11 +252,19 @@ def init_menu():
               taille="40",
               tag="title")
 
+    display_menu(0)
+
 def display_menu(selected):
+    """
+    Affiche tout le menu.
+    """
     display_menu_selection(selected)
     display_choice()
 
 def display_choice():
+    """
+    Affiche les différents choix du menu.
+    """
     utk.efface("choice")
 
     utk.texte(win_size[0]/2, 120,"Commencer",
@@ -237,7 +286,11 @@ def display_choice():
               taille="16",
               tag="choice")
 
+
 def display_menu_selection(selected):
+    """
+    Affiche la sélection du menu
+    """
     utk.efface("selection")
 
     utk.rectangle(win_size[0]/2-150, selected*40+105, win_size[0]/2+150, selected*40+135,

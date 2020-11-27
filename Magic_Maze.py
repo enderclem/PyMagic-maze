@@ -6,9 +6,11 @@ import display
 import levels as lvl
 import random
 import menu
+import time
 
 in_menu = True
 playing = True
+next_refresh = 0
 
 def main():
     # Initialisation
@@ -26,18 +28,22 @@ def main():
     while in_menu:
         input = utk.attente_touche_jusqua(500)
 
-        print(input)
+        print("input :", input)
 
         in_menu=menu.main_menu(input)
+        utk.mise_a_jour()
 
         exit_game(input)
 
+
+    # Partage les actions entre les joueurs
+    lvl.share_actions(lvl.nbr_of_player)
 
     display.display_all_level()
 
     # Boucle de jeu
     while playing:
-        input = utk.attente_touche_jusqua(20)
+        input = utk.attente_touche_jusqua(100-80*debug_mode)
 
         exit_game(input)
 
@@ -46,14 +52,16 @@ def main():
             debug_mode = not debug_mode
         if debug_mode:
             input = all_input[random.randint(0, len(all_input) - 1)]
-        print(input)
+        # print(input)
         ##### Fin parti debug #####
 
         if input is not None:
-            selection = selection_change(input, selection)
-            move_player(input, selection)
+            # selection = selection_change(input, selection)
+            player_choose(input)
 
-        display.display_timer()
+        refresh_display()
+        display.display_frame()
+        utk.mise_a_jour()
         check_steal()
 
         if check_exit() or update_time():
@@ -61,6 +69,7 @@ def main():
 
     end_game()
     utk.ferme_fenetre()
+
 
 def exit_game(input):
     global in_menu
@@ -70,6 +79,15 @@ def exit_game(input):
         in_menu = False
         playing = False  # arret du programme
 
+
+def refresh_display():
+    """
+    Reinitialise l'affichage du jeu pour éviter un certain bug.
+    """
+    global next_refresh
+    if time.process_time()>next_refresh:
+        next_refresh+=30
+        display.display_all_level()
 
 
 if __name__ == '__main__':
