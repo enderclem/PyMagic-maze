@@ -2,16 +2,25 @@ import random
 
 # Contient le niveau et certaines variables
 
-nbr_of_player = 1
+# Variable pour les boucles
+menu_loop=True
+playing_loop=False
+
+# Varribles des pions
 pion_name = ("magicienne", "elfe", "nain", "barbare")
 pion_pos = [(13, 9), (13, 11), (15, 9), (15, 11)]
-max_time = 180.0
-time_left = max_time
-actions = ("go_left", "go_right", "go_up", "go_down")#, "vortex", "escalator", "explore") # Toutes les actions disponibles
+# pion_pos = [(5, 3), (27, 3), (27, 17), (3, 17)]
+
+# Variables des joueurs
+nbr_of_player = 1
 players_act = [] # Actions partagées entre les joueurs
 # Contient la valeur des sélection d'action et de personnages.
 selected_pion = [0] 
 selected_act = [0] 
+
+# Autres
+actions = ("go_left", "go_right", "go_up", "go_down")#, "vortex", "escalator", "explore") # Toutes les actions disponibles
+has_stolen=False
 
 # Matrice du niveau
 level = [
@@ -70,7 +79,7 @@ controller = [{
     "y":"select action -1",
     "h":"select action +1"
 },{
-    "semicolon":"do action",
+    "colon":"do action",
     "o":"select player -1",
     "l":"select player +1",
     "p":"select action -1",

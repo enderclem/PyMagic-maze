@@ -4,13 +4,14 @@ import upemtk as utk
 import levels as lvl
 import display
 import time
+import timer
 
 selected=0
 nbr_choice=3
 
 def main_menu(input):
     """
-    Retourne True tant que le menu est sensé s'afficher.
+    Gère le menu principal.
     """
     global selected
 
@@ -19,7 +20,14 @@ def main_menu(input):
 
     display.display_menu(selected)
 
-    return not confirm_play(input)
+    if confirm_play(input):
+        lvl.menu_loop=False
+        lvl.playing_loop=True
+        timer.timer_paused=False
+
+    elif confirm_exit(input):
+        lvl.menu_loop=False
+
 
 def change_selected(input, selected):
     """
@@ -52,7 +60,16 @@ def change_nbr_player(input):
     
 
 def confirm_play(input):
-    return selected==0 and input=="Return"
+    if selected==0 and input=="Return":
+
+        # Partage les actions entre les joueurs
+        lvl.share_actions(lvl.nbr_of_player)
+
+        display.display_all_level()
+
+        return True
+
+    return False
 
 def confirm_exit(input):
     return selected==2 and input=="Return"

@@ -3,6 +3,7 @@
 import upemtk as utk
 from levels import * # Importation en double à régler
 import levels as lvl
+import timer
 
 win_size = (1200, 680)
 level_pos = (120, 20)  # Donne la position du coin supérieur gauche de l'affichage du niveau
@@ -63,7 +64,6 @@ def display_between_cases():
 
 
 def display_cases():
-
     for yy in range(1, len(level), 2):
         for xx in range(1, len(level[yy]), 2):
             y=yy//2 # Calcul du numéro de la case
@@ -78,18 +78,20 @@ def display_cases():
                 utk.image(case_pos[0], case_pos[1], "sprites/ground.gif")
 
             # Affichage des zones à voler
-            if "to steal" in meanings[case]:
+            if "to steal" in meanings[case] and not lvl.has_stolen:
                 utk.image(case_pos[0], case_pos[1],
-                          "sprites/stuff_" + meanings[case].replace("to steal ", "") + ".gif")
+                          "sprites/stuff_" + meanings[case].replace("to steal ", "") + ".gif", 
+                          tag="to_steal")
 
             # Affichage des sorties
             elif "exit" in meanings[case]:
                 utk.image(case_pos[0], case_pos[1],
                           "sprites/exit_" + meanings[case].replace("exit ", "") + ".gif")
 
-                utk.image(case_pos[0], case_pos[1],
-                          "sprites/X.gif",
-                          tag="closed")
+                if not lvl.has_stolen:
+                    utk.image(case_pos[0], case_pos[1],
+                              "sprites/X.gif",
+                              tag="closed")
 
     # Deuxième boucle identique à la première pour que les murs
     # soient chargés en dernier, au dessus des autres sprites
@@ -114,11 +116,14 @@ Mode Debug : F1""",
               taille=size)
 
 def display_frame():
-    for i in range(4):
-        display_player(i)
+    if lvl.playing_loop:
+        for i in range(4):
+            display_player(i)
 
-    display_timer(x=0, y=0)
-    display_selected_game()
+        display_timer(x=0, y=0)
+        display_selected_game()
+        if lvl.has_stolen:
+            open_exit()
 
 
 def display_lose():
@@ -203,7 +208,7 @@ def display_timer(x, y):
     utk.image(x+50, y+50,
               "sprites/hourglass.gif",
               tag="timer")
-    utk.texte(x+50, y+110,str(int(lvl.time_left) // 60) + ":" + str(int(lvl.time_left % 60)),
+    utk.texte(x+50, y+110,str(int(timer.timer) // 60) + ":" + str(int(timer.timer % 60)),
               couleur="black",
               ancrage="center",
               police="Purisa",
@@ -230,6 +235,7 @@ def init_game():
 
 def open_exit():
     utk.efface("closed")
+    utk.efface("to_steal")
 
 
 #################### MENU ####################

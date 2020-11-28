@@ -10,7 +10,7 @@ x Les persos
 - Le sablier
 x Case a voler
 x Case Exit
-- Vortex
+x Vortex
 - echelle
 - mur plein
 - mur entre cases
@@ -28,12 +28,14 @@ x Ajout sélecteur de pion
 x Afficher la sélection de pion
 
 Phase 2 :
-- Ajout escalator/vortex
-- version 2 joueurs
+- Ajout vortex
+- ajout escalator
+x version 2 joueurs
 x ajout murs
 - ajout case sablier et son effet flip de sablier
-- ajout mode 3 joueurs
-- ajout sélecteur
+x ajout mode 3 joueurs
+x ajout sélecteur
+x ajout mode 4 joueurs
 
 Phase 3 :
 - ajout exploration(OOF)

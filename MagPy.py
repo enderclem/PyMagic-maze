@@ -6,7 +6,6 @@ import display
 import time
 
 has_stolen = False
-last_frame_time = time.time()
 reason_stop = "quit"  # Contient une variable pour décider de quoi faire après la fin de la boucle principale
 
 
@@ -36,10 +35,9 @@ def check_exit():
     Retourne True si tous les joueurs ont atteint la sortie.
     :return bool:
     """
-    global has_stolen
     global reason_stop
 
-    if has_stolen:
+    if lvl.has_stolen:
         for i in range(len(lvl.pion_pos)):
             case = lvl.level[lvl.pion_pos[i][1]][lvl.pion_pos[i][0]]
             if lvl.meanings[case] != "exit " + lvl.pion_name[i]:
@@ -48,20 +46,18 @@ def check_exit():
         reason_stop = "win"
         return True
 
+
 def check_steal():
     """
-
-    :return:
+    Regarde si les objets on été volés
     """
-    global has_stolen
-
     for i in range(len(lvl.pion_pos)):
         case = lvl.level[lvl.pion_pos[i][1]][lvl.pion_pos[i][0]]
         if lvl.meanings[case] != "to steal " + lvl.pion_name[i]:
             return None
 
-    has_stolen = True
-    display.open_exit()
+    lvl.has_stolen = True
+
 
 def end_game():
     """
@@ -134,24 +130,6 @@ def player_move(direction, pion):
     if check_collision(pion_pos, new_pos):
         lvl.pion_pos[pion] = new_pos
 
-
-def update_time():
-    """
-    Met à jour le timer et vérifie si le temps est écoulé
-
-    :return bool:
-    """
-    global last_frame_time
-    global reason_stop
-
-    lvl.time_left -= time.time() - last_frame_time
-    last_frame_time = time.time()
-
-    if lvl.time_left <= 0:
-        reason_stop = "lose"
-        return True
-
-    return False
 
 def selection_change(touche, actual_selection):
     """
