@@ -21,6 +21,8 @@ selected_act = [0]
 # Autres
 actions = ("go_left", "go_right", "go_up", "go_down")#, "vortex", "escalator", "explore") # Toutes les actions disponibles
 has_stolen=False
+deactive_hourglass=[]
+discussing=False
 
 # Matrice du niveau
 level = [
@@ -35,7 +37,7 @@ level = [
     "...§.§.§.......................",
     ". § . § . . ._._. .#. . . .#. .", 
     "...............................",
-    ". § § § .#. ._._. . . . .#. . .", 
+    ". § § § .#.H._._. . . . .#. . .", 
     "...............................",
     ". § § § .#.#.£.@.#.#. . .#. .#.", 
     "...............................",
@@ -63,6 +65,7 @@ meanings = {
     ")": "exit elfe",
     "[": "exit nain",
     "]": "exit barbare",
+    "H": "flip hourglass",
 }
 
 # Les touches pour les différents controles en jeu, par joueur

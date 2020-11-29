@@ -44,7 +44,11 @@ def main():
             ##### Fin parti debug #####
 
             if input is not None:
-                player_choose(input)
+                if lvl.discussing:
+                    lvl.discussing=False
+                    display.efface_discuss()
+                else:
+                    player_choose(input)
 
             timer.update_timer()
             check_steal()
@@ -54,7 +58,7 @@ def main():
         display.display_frame()
         utk.mise_a_jour()
 
-        if check_exit() or timer.timer<=0:
+        if check_exit() or check_timer():
             break
 
         if input == "Escape":

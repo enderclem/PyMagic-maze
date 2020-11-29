@@ -30,7 +30,7 @@ def display_all_level():
     for i in range(4):
         display_player(i)
     display_selected_game()
-    display_command(10, 460, 12)
+    # display_command(10, 460, 12)
 
     utk.mise_a_jour()
 
@@ -93,6 +93,15 @@ def display_cases():
                               "sprites/X.gif",
                               tag="closed")
 
+            # Affichage des cases sabliers
+            if meanings[case] == "flip hourglass":
+                utk.image(case_pos[0], case_pos[1],
+                          "sprites/flip_hourglass.gif")
+
+                if case_pos in lvl.deactive_hourglass:
+                    utk.image(case_pos[0], case_pos[1],
+                              "sprites/X.gif")
+
     # Deuxième boucle identique à la première pour que les murs
     # soient chargés en dernier, au dessus des autres sprites
     for yy in range(1, len(level), 2):
@@ -115,11 +124,34 @@ Sélection : B (pour changer), N (Pour verrouiller)
 Mode Debug : F1""",
               taille=size)
 
+
+def display_discuss(x, y, case):
+    pos_case=(level_pos[0]+40*(case[1]//2)+20, level_pos[1]+40*(case[0]//2)+20)
+    utk.image(pos_case[0], pos_case[1],
+              "sprites/X.gif")
+
+    utk.image(win_size[0]/2, win_size[1]/2,
+              "sprites/discuss.gif", 
+              tag="discuss_icon")
+
+    utk.texte(x, y, 
+              "ENTREE pour \nreprendre...",
+              ancrage="nw",
+              taille=10,
+              tag="discuss_info")
+
+    display_frame()
+
+
+def efface_discuss_icon():
+    utk.efface("discuss_icon")
+
+def efface_discuss():
+    utk.efface("discuss_icon")
+    utk.efface("discuss_info")
+
 def display_frame():
     if lvl.playing_loop:
-        for i in range(4):
-            display_player(i)
-
         display_timer(x=0, y=0)
         display_selected_game()
         if lvl.has_stolen:
@@ -205,9 +237,15 @@ def display_timer(x, y):
     """
     utk.efface("timer")
 
-    utk.image(x+50, y+50,
-              "sprites/hourglass.gif",
-              tag="timer")
+    if timer.timer_paused:
+        utk.image(x+50, y+50,
+                  "sprites/hourglass_freeze.gif",
+                  tag="timer")
+    else:
+        utk.image(x+50, y+50,
+                  "sprites/hourglass.gif",
+                  tag="timer")
+
     utk.texte(x+50, y+110,str(int(timer.timer) // 60) + ":" + str(int(timer.timer % 60)),
               couleur="black",
               ancrage="center",

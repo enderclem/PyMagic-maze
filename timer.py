@@ -19,8 +19,6 @@ def flip_timer():
     timer=max_time-timer
     timer_end=time.time()+timer
 
-    timer_paused=True
-
 
 def update_timer():
     """

@@ -4,6 +4,7 @@ import upemtk as utk
 import levels as lvl
 import display
 import time
+import timer
 
 has_stolen = False
 reason_stop = "quit"  # Contient une variable pour décider de quoi faire après la fin de la boucle principale
@@ -47,6 +48,22 @@ def check_exit():
         return True
 
 
+def check_hourglass_case(pos):
+    """
+    Vérifie si la case indiquée est un sablier
+    """
+    mean=lvl.meanings[lvl.level[pos[1]][pos[0]]]
+    print("case atteinte :", mean)
+    if mean=="flip hourglass" and pos not in lvl.deactive_hourglass:
+        lvl.discussing=True
+        lvl.deactive_hourglass.append(pos)
+        timer.flip_timer()
+        display.display_discuss(x=10, y=130, 
+                                case=pos)
+        for i in range(4):
+            display.display_player(i)
+
+
 def check_steal():
     """
     Regarde si les objets on été volés
@@ -57,6 +74,15 @@ def check_steal():
             return None
 
     lvl.has_stolen = True
+
+def check_timer():
+    global reason_stop
+
+    if timer.timer<=0:
+        reason_stop="lose"
+        return True
+
+    return False
 
 
 def end_game():
@@ -129,6 +155,9 @@ def player_move(direction, pion):
 
     if check_collision(pion_pos, new_pos):
         lvl.pion_pos[pion] = new_pos
+        display.display_player(pion)
+
+        check_hourglass_case(new_pos)
 
 
 def selection_change(touche, actual_selection):
