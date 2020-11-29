@@ -140,6 +140,8 @@ def player_act(p):
     action=lvl.players_act[p][lvl.selected_act[p]]
     if "go" in action:
         player_move(action.replace("go_", ""), lvl.selected_pion[p])
+    elif action=="vortex":
+        player_vortex(p)
     # Ajouter ici si l'action est un vortex, escalator...
 
 
@@ -158,6 +160,21 @@ def player_move(direction, pion):
         display.display_player(pion)
 
         check_hourglass_case(new_pos)
+
+
+def player_vortex(p):
+    pion=lvl.selected_pion[p]
+    pion_name=lvl.pion_name[pion]
+    case_pos=lvl.pion_pos[pion]
+    case=lvl.level[case_pos[1]][case_pos[0]]
+    case_mean=lvl.meanings[case]
+
+    print("Utilisation du vortex avec le pion :", pion_name)
+
+    print("Use vortex info :", case_mean, "vortex "+pion_name)
+    if case_mean=="vortex "+pion_name:
+        print("Utilisation du vortex confirmé")
+
 
 
 def selection_change(touche, actual_selection):

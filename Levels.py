@@ -19,7 +19,7 @@ selected_pion = [0]
 selected_act = [0] 
 
 # Autres
-actions = ("go_left", "go_right", "go_up", "go_down")#, "vortex", "escalator", "explore") # Toutes les actions disponibles
+actions = ("go_left", "go_right", "go_up", "go_down", "vortex")#, "escalator", "explore") # Toutes les actions disponibles
 has_stolen=False
 deactive_hourglass=[]
 discussing=False
@@ -35,7 +35,7 @@ level = [
     "...............................",
     ". . . . .#.#.$.€.#.#. . . .#. .", 
     "...§.§.§.......................",
-    ". § . § . . ._._. .#. . . .#. .", 
+    ". § . § . .0._._. .#. . . .#. .", 
     "...............................",
     ". § § § .#.H._._. . . . .#. . .", 
     "...............................",
@@ -66,6 +66,10 @@ meanings = {
     "[": "exit nain",
     "]": "exit barbare",
     "H": "flip hourglass",
+    "0": "vortex magicienne",
+    "o": "vortex elfe",
+    "O": "vortex nain",
+    "°": "vortex barbare",
 }
 
 # Les touches pour les différents controles en jeu, par joueur

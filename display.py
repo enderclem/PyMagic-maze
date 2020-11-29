@@ -94,13 +94,18 @@ def display_cases():
                               tag="closed")
 
             # Affichage des cases sabliers
-            if meanings[case] == "flip hourglass":
+            elif meanings[case] == "flip hourglass":
                 utk.image(case_pos[0], case_pos[1],
                           "sprites/flip_hourglass.gif")
 
                 if case_pos in lvl.deactive_hourglass:
                     utk.image(case_pos[0], case_pos[1],
                               "sprites/X.gif")
+
+            # Affichage des cases sabliers
+            elif "vortex" in meanings[case]:
+                display_vortex(case_pos, meanings[case])
+
 
     # Deuxième boucle identique à la première pour que les murs
     # soient chargés en dernier, au dessus des autres sprites
@@ -252,6 +257,16 @@ def display_timer(x, y):
               police="Purisa",
               taille=28,
               tag="timer")
+
+
+def display_vortex(case_pos, meaning_case):
+    """
+    Affiche le vortex liée à la case et sa couleur.
+    """
+    sprite_name="sprites/"+meaning_case.replace(" ", "_")+".gif"
+
+    utk.image(case_pos[0], case_pos[1],
+              sprite_name)
 
 
 def display_win():
