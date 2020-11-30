@@ -6,7 +6,7 @@ import random
 menu_loop=True
 playing_loop=False
 
-# Varribles des pions
+# Variables des pions
 pion_name = ("magicienne", "elfe", "nain", "barbare")
 pion_pos = [(13, 9), (13, 11), (15, 9), (15, 11)]
 # pion_pos = [(5, 3), (27, 3), (27, 17), (3, 17)]
@@ -19,27 +19,28 @@ selected_pion = [0]
 selected_act = [0] 
 
 # Autres
-actions = ("go_left", "go_right", "go_up", "go_down", "vortex")#, "escalator", "explore") # Toutes les actions disponibles
+actions = ("go_left", "go_right", "go_up", "go_down", "vortex", "escalator")#, "explore") # Toutes les actions disponibles
 has_stolen=False
 deactive_hourglass=[]
 discussing=False
 player_using_vortex=-1
 selected_vortex=(1, 1)
+escalator={}
 
 # Matrice du niveau
 level = [
     "...............................",
     ".#.#. . . . .#.#.#.#. . .H.#.#.", 
     ".........§.....................",
-    ".#.(.0.#. . .#. . .#. . . .).#.", 
+    ".#.(.0.#. . .#.e. .#. . . .).#.", 
     "...............................",
-    ".#.#.#. . .#.#. .#. . . . .#.#.", 
+    ".#.#.#. . .#.#. .#.e. . . .#.#.", 
     "...............................",
     ". . . . .#.#.$.€.#.#. . . .#.°.", 
     "...§.§.§.......................",
     ". § . § . .0._._.°.#. . . .#. .", 
     "...............................",
-    ". § § § .#.o._._.O. . . .#. . .", 
+    ". § § § .#.o._._.O.e. . .#. . .", 
     "...............................",
     ". § § § .#.#.£.@.#.#. . .#. .#.", 
     "...............................",
@@ -72,6 +73,7 @@ meanings = {
     "o": "vortex elfe",
     "°": "vortex nain",
     "O": "vortex barbare",
+    "e": "escalator",
 }
 
 # Les touches pour les différents controles en jeu, par joueur
@@ -128,3 +130,17 @@ def share_actions(nbr_of_player):
 
     selected_pion=[0 for i in range(nbr_of_player)]
     selected_act=[0 for i in range(nbr_of_player)]
+
+
+def level_add_escalators():
+
+    global escalator, level, meanings
+
+    for y in range(len(level)):
+        for x in range(len(level[y])):
+            if meanings[level[y][x]]=="escalator" and (x,y) not in escalator.keys():
+                for i in range(0, 5, 2):
+                    for j in range(-4*(i!=0) + 2*(i==0), 5, 2):
+                        if meanings[level[y+i][x+j]]=="escalator":
+                            escalator[(x, y)]=(x+j, y+i)
+                            escalator[(x+j, y+i)]=(x, y)

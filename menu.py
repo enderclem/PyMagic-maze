@@ -24,6 +24,10 @@ def main_menu(input):
         lvl.menu_loop=False
         lvl.playing_loop=True
         timer.timer_paused=False
+        lvl.level_add_escalators()
+        lvl.share_actions(lvl.nbr_of_player)
+        display.display_all_level()
+
 
     elif confirm_exit(input):
         lvl.menu_loop=False
@@ -60,16 +64,8 @@ def change_nbr_player(input):
     
 
 def confirm_play(input):
-    if selected==0 and input=="Return":
+    return selected==0 and input=="Return"
 
-        # Partage les actions entre les joueurs
-        lvl.share_actions(lvl.nbr_of_player)
-
-        display.display_all_level()
-
-        return True
-
-    return False
-
+    
 def confirm_exit(input):
     return selected==2 and input=="Return"

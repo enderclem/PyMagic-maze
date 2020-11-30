@@ -53,16 +53,15 @@ def check_hourglass_case(pos):
     Vérifie si la case indiquée est un sablier
     """
     mean=lvl.meanings[lvl.level[pos[1]][pos[0]]]
-    print("case atteinte :", mean)
 
     if mean=="flip hourglass" and pos not in lvl.deactive_hourglass:
         lvl.discussing=True
         lvl.deactive_hourglass.append(pos)
         timer.flip_timer()
-        display.display_discuss(x=10, y=130, 
-                                case=pos)
+        display.display_timer_X(case=pos)
         for i in range(4):
             display.display_pion(i)
+        display.display_discuss(x=10, y=130)
 
 
 def check_steal():
@@ -75,6 +74,7 @@ def check_steal():
             return None
 
     lvl.has_stolen = True
+    display.display_X_vortex()
 
 def check_timer():
     global reason_stop
@@ -141,8 +141,10 @@ def player_act(p):
     action=lvl.players_act[p][lvl.selected_act[p]]
     if "go" in action:
         player_move(action.replace("go_", ""), lvl.selected_pion[p])
-    elif action=="vortex":
+    elif action=="vortex" and not lvl.has_stolen:
         player_vortex(p)
+    elif action=="escalator":
+        player_escalator(p)
     # Ajouter ici si l'action est un vortex, escalator...
 
 
@@ -174,6 +176,17 @@ def player_vortex(p):
         lvl.player_using_vortex=p
         lvl.selected_vortex=lvl.pion_pos[lvl.selected_pion[p]]
         display.display_selected_vortex()
+
+
+def player_escalator(p):
+    pion=lvl.selected_pion[p]
+    case_pos=lvl.pion_pos[pion]
+    case=lvl.level[case_pos[1]][case_pos[0]]
+    case_mean=lvl.meanings[case]
+
+    if case_mean=="escalator":
+        lvl.pion_pos[pion]=lvl.escalator[lvl.pion_pos[pion]]
+        display.display_pion(pion)
 
 
 def selection_change(touche, actual_selection):
@@ -223,5 +236,4 @@ def vortex_selection(input):
             lvl.pion_pos[lvl.selected_pion[p]]=vort
             display.efface_selected_vortex()
             display.display_pion(lvl.selected_pion[p])
-            print("Teleportation terminé !")
-
+            

@@ -26,14 +26,14 @@ def display_all_level():
 
     display_cases()
     display_between_cases()
-
     for i in range(4):
         display_pion(i)
     display_selected_game()
-    # display_command(10, 460, 12)
-
     if lvl.player_using_vortex!=-1:
         display_selected_vortex()
+    display_escalators()
+    if lvl.discussing:
+        display_discuss(x=10, y=130)
 
     utk.mise_a_jour()
 
@@ -109,6 +109,10 @@ def display_cases():
             elif "vortex" in meanings[case]:
                 display_vortex(case_pos, meanings[case])
 
+                if lvl.has_stolen:
+                    utk.image(case_pos[0], case_pos[1],
+                          "sprites/X.gif")
+
 
     # Deuxième boucle identique à la première pour que les murs
     # soient chargés en dernier, au dessus des autres sprites
@@ -133,11 +137,7 @@ Mode Debug : F1""",
               taille=size)
 
 
-def display_discuss(x, y, case):
-    pos_case=(level_pos[0]+40*(case[0]//2)+20, level_pos[1]+40*(case[1]//2)+20)
-    utk.image(pos_case[0], pos_case[1],
-              "sprites/X.gif")
-
+def display_discuss(x, y):
     utk.image(win_size[0]/2, win_size[1]/2,
               "sprites/discuss.gif", 
               tag="discuss_icon")
@@ -157,6 +157,21 @@ def efface_discuss_icon():
 def efface_discuss():
     utk.efface("discuss_icon")
     utk.efface("discuss_info")
+
+
+def display_escalators():
+    for c_pos in lvl.escalator.keys():
+        pair=(c_pos, lvl.escalator[c_pos])
+        print("pair :", pair)
+
+        delta=((pair[1][0]-pair[0][0])//2, (pair[1][1]-pair[0][1])//2)
+        if delta[1]>=0 and (delta[0]>=0 \
+        or (delta[0]>=-2 and delta[1]>0)):
+            print("affichage esc :", level_pos[0]+pair[0][0]//2*40+20, level_pos[1]+pair[0][1]//2*40+20)
+            utk.image(level_pos[0]+pair[0][0]//2*40+20, 
+                      level_pos[1]+pair[0][1]//2*40+20,
+                      "sprites/escalator/"+str(delta[0])+"_"+str(delta[1])+".gif")
+
 
 def display_frame():
     if lvl.playing_loop:
@@ -275,6 +290,12 @@ def display_timer(x, y):
               tag="timer")
 
 
+def display_timer_X(case):
+    pos_case=(level_pos[0]+40*(case[0]//2)+20, level_pos[1]+40*(case[1]//2)+20)
+    utk.image(pos_case[0], pos_case[1],
+              "sprites/X.gif")
+
+
 def display_vortex(case_pos, meaning_case):
     """
     Affiche le vortex liée à la case et sa couleur.
@@ -293,6 +314,22 @@ def display_win():
               ancrage="center")
 
     utk.mise_a_jour()
+
+
+def display_X_vortex():
+    """
+    Affiche la fermeture des vortex
+    """
+    for y in range(1, len(lvl.level), 2):
+        for x in range(1, len(lvl.level[y]), 2):
+            case = lvl.level[y][x]  # Récupération de la valeur la case en question
+
+            if "vortex" in lvl.meanings[case]:
+                # Centre de la position de la case en question
+                case_pos = (x//2 * 40 + 20 + level_pos[0], y//2 * 40 + 20 + level_pos[1])
+
+                utk.image(case_pos[0], case_pos[1],
+                          "sprites/X.gif")
 
 
 def init_game():

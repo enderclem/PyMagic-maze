@@ -28,7 +28,8 @@ x Ajout sélecteur de pion
 x Afficher la sélection de pion
 
 Phase 2 :
-- Ajout vortex
+x Ajout vortex
+- desactivation vortex apres vol
 - ajout escalator
 x version 2 joueurs
 x ajout murs
@@ -36,6 +37,7 @@ x ajout murs
 x ajout mode 3 joueurs
 x ajout sélecteur
 x ajout mode 4 joueurs
+x sauvegardes
 
 Phase 3 :
 - ajout exploration(OOF)
