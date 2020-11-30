@@ -47,6 +47,8 @@ def main():
                 if lvl.discussing:
                     lvl.discussing=False
                     display.efface_discuss()
+                elif lvl.player_using_vortex!=-1:
+                    vortex_selection(input)
                 else:
                     player_choose(input)
 

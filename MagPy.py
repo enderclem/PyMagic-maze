@@ -169,12 +169,14 @@ def player_vortex(p):
     case=lvl.level[case_pos[1]][case_pos[0]]
     case_mean=lvl.meanings[case]
 
-    print("Utilisation du vortex avec le pion :", pion_name)
-
-    print("Use vortex info :", case_mean, "vortex "+pion_name)
+    # print("Utilisation du vortex avec le pion :", pion_name)
+    # print("Use vortex info :", case_mean, "vortex "+pion_name)
     if case_mean=="vortex "+pion_name:
-        print("Utilisation du vortex confirmé")
-
+        # print("Utilisation du vortex confirmé")
+        lvl.player_using_vortex=p
+        print("pion pose :", lvl.pion_pos[lvl.selected_pion[p]])
+        lvl.selected_vortex=lvl.pion_pos[lvl.selected_pion[p]]
+        display.display_selected_vortex()
 
 
 def selection_change(touche, actual_selection):
@@ -192,3 +194,27 @@ def selection_change(touche, actual_selection):
 
     # display.display_selected_pion(5, 140, actual_selection)
     return actual_selection
+
+
+def vortex_selection(input):
+    """
+    Gère la sélection et l'utilisation du vortex.
+    """
+    p=lvl.player_using_vortex
+    control=lvl.controller[p]
+    vort=lvl.selected_vortex
+
+    if "select" in control[input]:
+        select_delta=int(control[input].replace("select player ", "").replace("select action ", ""))
+        print("selection en cours... valeur :", select_delta)
+
+        pass # Changer ici la selection du vortex
+
+        display.display_selected_vortex()
+
+
+    elif control[input]=="do action":
+        lvl.player_using_vortex=-1
+        lvl.pion_pos[lvl.selected_pion[p]]=vort
+        display.efface_selected_vortex()
+        print("Teleportation terminé !")

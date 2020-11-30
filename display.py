@@ -32,6 +32,9 @@ def display_all_level():
     display_selected_game()
     # display_command(10, 460, 12)
 
+    if lvl.player_using_vortex!=-1:
+        display_selected_vortex()
+
     utk.mise_a_jour()
 
 def display_between_cases():
@@ -234,6 +237,19 @@ def display_selected_action(x, y, select_value, list_actions, player_num=-1):
             x+20, y+i*40+20,
             "sprites/" + list_actions[i] + ".gif",
             tag=tag_name)
+
+
+def display_selected_vortex():
+    efface_selected_vortex()
+    utk.image(
+        lvl.selected_vortex[0]//2 * 40 + 20 + level_pos[0],
+        lvl.selected_vortex[1]//2 * 40 + 20 + level_pos[1],
+        "sprites/vortex_select.gif",
+        tag="vortex_select"
+    )
+
+def efface_selected_vortex():
+    utk.efface("vortex_select")
 
 
 def display_timer(x, y):
