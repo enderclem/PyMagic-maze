@@ -28,7 +28,7 @@ def display_all_level():
     display_between_cases()
 
     for i in range(4):
-        display_player(i)
+        display_pion(i)
     display_selected_game()
     # display_command(10, 460, 12)
 
@@ -101,7 +101,7 @@ def display_cases():
                 utk.image(case_pos[0], case_pos[1],
                           "sprites/flip_hourglass.gif")
 
-                if case_pos in lvl.deactive_hourglass:
+                if (xx, yy) in lvl.deactive_hourglass:
                     utk.image(case_pos[0], case_pos[1],
                               "sprites/X.gif")
 
@@ -134,7 +134,7 @@ Mode Debug : F1""",
 
 
 def display_discuss(x, y, case):
-    pos_case=(level_pos[0]+40*(case[1]//2)+20, level_pos[1]+40*(case[0]//2)+20)
+    pos_case=(level_pos[0]+40*(case[0]//2)+20, level_pos[1]+40*(case[1]//2)+20)
     utk.image(pos_case[0], pos_case[1],
               "sprites/X.gif")
 
@@ -173,7 +173,7 @@ def display_lose():
     utk.mise_a_jour()
 
 
-def display_player(p):
+def display_pion(p):
     """
     Réaffiche le pion indiqué.
     :param int p: numéro du pion

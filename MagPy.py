@@ -54,6 +54,7 @@ def check_hourglass_case(pos):
     """
     mean=lvl.meanings[lvl.level[pos[1]][pos[0]]]
     print("case atteinte :", mean)
+
     if mean=="flip hourglass" and pos not in lvl.deactive_hourglass:
         lvl.discussing=True
         lvl.deactive_hourglass.append(pos)
@@ -61,7 +62,7 @@ def check_hourglass_case(pos):
         display.display_discuss(x=10, y=130, 
                                 case=pos)
         for i in range(4):
-            display.display_player(i)
+            display.display_pion(i)
 
 
 def check_steal():
@@ -157,7 +158,7 @@ def player_move(direction, pion):
 
     if check_collision(pion_pos, new_pos):
         lvl.pion_pos[pion] = new_pos
-        display.display_player(pion)
+        display.display_pion(pion)
 
         check_hourglass_case(new_pos)
 
@@ -169,12 +170,8 @@ def player_vortex(p):
     case=lvl.level[case_pos[1]][case_pos[0]]
     case_mean=lvl.meanings[case]
 
-    # print("Utilisation du vortex avec le pion :", pion_name)
-    # print("Use vortex info :", case_mean, "vortex "+pion_name)
     if case_mean=="vortex "+pion_name:
-        # print("Utilisation du vortex confirmé")
         lvl.player_using_vortex=p
-        print("pion pose :", lvl.pion_pos[lvl.selected_pion[p]])
         lvl.selected_vortex=lvl.pion_pos[lvl.selected_pion[p]]
         display.display_selected_vortex()
 
@@ -182,10 +179,6 @@ def player_vortex(p):
 def selection_change(touche, actual_selection):
     """
     Change la sélection du pion.
-
-    :param string input: Valeur de la touche appuyé
-    :param int actual_selection: Numéro du pion actuellement sélectionné
-    :return: retourne la nouvelle valeur du pion séléctionné
     """
     if touche == "b":
         actual_selection += 1
@@ -203,18 +196,32 @@ def vortex_selection(input):
     p=lvl.player_using_vortex
     control=lvl.controller[p]
     vort=lvl.selected_vortex
+    pion_name=lvl.pion_name[lvl.selected_pion[p]]
 
-    if "select" in control[input]:
-        select_delta=int(control[input].replace("select player ", "").replace("select action ", ""))
-        print("selection en cours... valeur :", select_delta)
+    if input in control.keys():
+        if "select" in control[input]:
+            select_delta=int(control[input].replace("select player ", "").replace("select action ", ""))
 
-        pass # Changer ici la selection du vortex
+            y_start=vort[1]
+            y_end=len(lvl.level)*(select_delta==1) - (select_delta==-1)
+            x_start=vort[0]+select_delta*2
+            x_end=len(lvl.level[0])*(select_delta==1) - (select_delta==-1)
 
-        display.display_selected_vortex()
+            for y in range(y_start, y_end, select_delta*2):
+                for x in range(x_start, x_end, select_delta*2):
+                    if lvl.meanings[lvl.level[y][x]] == "vortex "+pion_name:
+
+                        lvl.selected_vortex=(x, y)
+                        display.display_selected_vortex()
+                        return None
+
+                x_start=(len(lvl.level[0])-1)*(select_delta==-1) + select_delta
 
 
-    elif control[input]=="do action":
-        lvl.player_using_vortex=-1
-        lvl.pion_pos[lvl.selected_pion[p]]=vort
-        display.efface_selected_vortex()
-        print("Teleportation terminé !")
+        elif control[input]=="do action":
+            lvl.player_using_vortex=-1
+            lvl.pion_pos[lvl.selected_pion[p]]=vort
+            display.efface_selected_vortex()
+            display.display_pion(lvl.selected_pion[p])
+            print("Teleportation terminé !")
+
