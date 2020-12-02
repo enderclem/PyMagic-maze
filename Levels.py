@@ -1,4 +1,5 @@
 import random
+import os
 
 # Contient le niveau et certaines variables
 
@@ -30,25 +31,25 @@ escalator={}
 # Matrice du niveau
 level = [
     "...............................",
-    ".#.#. . . . .#.#.#.#. . .H.#.#.", 
+    ".#.#. . . . .#.#.#.#. . .H.#.#.",
     ".........§.....................",
-    ".#.(.0.#. . .#.e. .#. . . .).#.", 
+    ".#.(.0.#. . .#.e. .#. . . .).#.",
     "...............................",
-    ".#.#.#. . .#.#. .#.e. . . .#.#.", 
+    ".#.#.#. . .#.#. .#.e. . . .#.#.",
     "...............................",
-    ". . . . .#.#.$.€.#.#. . . .#.°.", 
+    ". . . . .#.#.$.€.#.#. . . .#.°.",
     "...§.§.§.......................",
-    ". § . § . .0._._.°.#. . . .#. .", 
+    ". § . § . .0._._.°.#. . . .#. .",
     "...............................",
-    ". § § § .#.o._._.O.e. . .#. . .", 
+    ". § § § .#.o._._.O.e. . .#. . .",
     "...............................",
-    ". § § § .#.#.£.@.#.#. . .#. .#.", 
+    ". § § § .#.#.£.@.#.#. . .#. .#.",
     "...............................",
-    ". . § . § .#. .#.#. . . . . .#.", 
+    ". . § . § .#. .#.#. . . . . .#.",
     "...§.§.§.......................",
-    ".#.]. . . .#. . . . . . . .[.#.", 
+    ".#.]. . . .#. . . . . . . .[.#.",
     "...............................",
-    ".#.#.H. . . . . . . . . . .#.#.", 
+    ".#.#.H. . . . . . . . . . .#.#.",
     "..............................."
 ]
 
@@ -133,7 +134,9 @@ def share_actions(nbr_of_player):
 
 
 def level_add_escalators():
-
+    """
+    Ajoute les positions des escalator par pair pour les calculs.
+    """
     global escalator, level, meanings
 
     for y in range(len(level)):
@@ -144,3 +147,64 @@ def level_add_escalators():
                         if meanings[level[y+i][x+j]]=="escalator":
                             escalator[(x, y)]=(x+j, y+i)
                             escalator[(x+j, y+i)]=(x, y)
+
+
+def save_game(timer):
+    """
+    Sauvegarde le jeu.
+    """
+    text=""
+    # Sauvegarde du timer
+    text+="timer="+str(timer)+"\n"
+    # Sauvegarde des positions des pions
+    for i in range(4):
+        text+=pion_name[i]+" position="+str(pion_pos[i][0])+","+str(pion_pos[i][1])+"\n"
+    # Sauvegarde du nombre de joueurs
+    text+="nbr of player="+str(nbr_of_player)+"\n"
+    # Sauvegarde des actions des joueurs
+    for i in range(nbr_of_player):
+        text+="J"+str(i)+" actions="
+        for j in range(len(players_act[i])):
+            text+=","*(j!=0)+players_act[i][j]
+        text+="\n"
+    # Sauvegarde de la variable has_stolen
+    text+="has stolen="+str(int(has_stolen))+"\n"
+    # Sauvegarde du niveau
+    text+="\nlevel=\n"
+    for line in level:
+        text+=line+"\n"
+
+    save=open("save.save", "w")
+    save.write(text)
+    save.close()
+
+def load_game():
+    """
+    Charge le jeu et retourne le timer.
+    """
+    global pion_pos, nbr_of_player, players_act, has_stolen
+
+    save=open("save.save", 'r')
+    # Chargement du timer
+    timer=float(save.readline().split('=')[1])
+    # Chargement des positions des pions
+    pos=[]
+    for i in range(4):
+        value=save.readline().split('=')[1].split(',')
+        pos.append((int(value[0]), int(value[1])))
+    pion_pos=pos
+    # Chargement du nbr de joueur
+    nbr_of_player=int(save.readline().split('=')[1])
+    # Chargement des actions des joueurs
+    players_act=[]
+    for i in range(nbr_of_player):
+        values=save.readline().split('=')[1].split(',')
+        players_act.append([val.replace("\n", "") for val in values])
+    # Chargement du booleen has_stolen
+    has_stolen=bool(int(save.readline().split('=')[1]))
+
+    level_add_escalators()
+    return timer
+
+
+

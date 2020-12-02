@@ -29,15 +29,17 @@ x Afficher la sélection de pion
 
 Phase 2 :
 x Ajout vortex
-- desactivation vortex apres vol
-- ajout escalator
+x desactivation vortex apres vol
+x ajout escalator
 x version 2 joueurs
 x ajout murs
-- ajout case sablier et son effet flip de sablier
+x ajout case sablier et son effet flip de sablier
 x ajout mode 3 joueurs
 x ajout sélecteur
-x ajout mode 4 joueurs
-x sauvegardes
+x ajout mode 4 joueurs (bonus)
+- sauvegarde
+- pause en jeu
+- affichage controles
 
 Phase 3 :
 - ajout exploration(OOF)

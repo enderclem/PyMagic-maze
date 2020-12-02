@@ -35,3 +35,9 @@ def update_timer():
         timer=timer_end-time.time()
 
     time_last_frame=time.time()
+
+def set_timer(value):
+    global timer, timer_end
+    update_timer()
+    timer = value
+    timer_end = time.time()+timer

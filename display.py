@@ -162,12 +162,10 @@ def efface_discuss():
 def display_escalators():
     for c_pos in lvl.escalator.keys():
         pair=(c_pos, lvl.escalator[c_pos])
-        print("pair :", pair)
 
         delta=((pair[1][0]-pair[0][0])//2, (pair[1][1]-pair[0][1])//2)
         if delta[1]>=0 and (delta[0]>=0 \
         or (delta[0]>=-2 and delta[1]>0)):
-            print("affichage esc :", level_pos[0]+pair[0][0]//2*40+20, level_pos[1]+pair[0][1]//2*40+20)
             utk.image(level_pos[0]+pair[0][0]//2*40+20, 
                       level_pos[1]+pair[0][1]//2*40+20,
                       "sprites/escalator/"+str(delta[0])+"_"+str(delta[1])+".gif")
@@ -196,8 +194,8 @@ def display_pion(p):
     utk.efface(pion_name[p])
 
     utk.image(
-        pion_pos[p][0]//2 * 40 + 20 + level_pos[0],
-        pion_pos[p][1]//2 * 40 + 20 + level_pos[1],
+        lvl.pion_pos[p][0]//2 * 40 + 20 + level_pos[0],
+        lvl.pion_pos[p][1]//2 * 40 + 20 + level_pos[1],
         "sprites/" + pion_name[p] + ".gif",
         tag=pion_name[p]
     )
@@ -364,39 +362,99 @@ def init_menu():
               taille="40",
               tag="title")
 
-    display_menu(0)
+    display_menu(0, ())
 
-def display_menu(selected):
+
+def init_pause():
+    """
+    Initialise le menu de pause.
+    """
+    utk.rectangle(200, 100, win_size[0]-200, win_size[1]-100,
+                  couleur="black",
+                  remplissage="grey",
+                  epaisseur=5,
+                  tag="background")
+
+    display_pause(0, ("Reprendre", "Sauvegarder", "Quitter"))
+
+
+def display_pause(selected, menu_choice):
     """
     Affiche tout le menu.
     """
-    display_menu_selection(selected)
-    display_choice()
+    display_pause_selection(selected)
+    display_pause_choice(menu_choice)
 
-def display_choice():
+
+def display_pause_choice(menu_choice):
     """
     Affiche les différents choix du menu.
     """
     utk.efface("choice")
 
-    utk.texte(win_size[0]/2, 120,"Commencer",
-              couleur="white",
+    for i in range(len(menu_choice)):
+        choice = menu_choice[i]
+
+        if choice=="Nombre de joueur : ":
+            choice+=str(lvl.nbr_of_player)
+
+        utk.texte(win_size[0]/2, 120+i*40, choice,
+                  couleur="black",
+                  ancrage="center",
+                  police="Purisa",
+                  taille="16",
+                  tag="choice")
+
+
+def display_pause_selection(selected):
+    """
+    Affiche la sélection du menu
+    """
+    utk.efface("selection")
+
+    utk.rectangle(win_size[0]/2-150, selected*40+105, win_size[0]/2+150, selected*40+135,
+                  couleur="white",
+                  remplissage="white",
+                  epaisseur=1,
+                  tag="selection")
+
+
+def display_save_success():
+    utk.texte(win_size[0]/2, win_size[1]-200, 
+              "Sauvegarde terminé.",
+              couleur="green",
               ancrage="center",
               police="Purisa",
-              taille="16",
-              tag="choice")
-    utk.texte(win_size[0]/2, 160,"Nombre de joueur : " + str(lvl.nbr_of_player),
-              couleur="white",
-              ancrage="center",
-              police="Purisa",
-              taille="16",
-              tag="choice")
-    utk.texte(win_size[0]/2, 200,"Quitter",
-              couleur="white",
-              ancrage="center",
-              police="Purisa",
-              taille="16",
-              tag="choice")
+              taille="16")
+
+
+
+def display_menu(selected, menu_choice):
+    """
+    Affiche tout le menu.
+    """
+    display_menu_selection(selected)
+    display_menu_choice(menu_choice)
+
+
+def display_menu_choice(menu_choice):
+    """
+    Affiche les différents choix du menu.
+    """
+    utk.efface("choice")
+
+    for i in range(len(menu_choice)):
+        choice = menu_choice[i]
+
+        if choice=="Nombre de joueur : ":
+            choice+=str(lvl.nbr_of_player)
+
+        utk.texte(win_size[0]/2, 120+i*40, choice,
+                  couleur="white",
+                  ancrage="center",
+                  police="Purisa",
+                  taille="16",
+                  tag="choice")
 
 
 def display_menu_selection(selected):
