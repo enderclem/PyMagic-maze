@@ -7,14 +7,16 @@ Global :
 
 Sprites :
 x Les persos
-- Le sablier
+x Le sablier
 x Case a voler
 x Case Exit
 x Vortex
-- echelle
+x escalator
 - mur plein
 - mur entre cases
 x sol
+- commandes de jeu
+- discuss amelioration
 
 Phase 1 :
 x niveau 10x15
@@ -37,8 +39,8 @@ x ajout case sablier et son effet flip de sablier
 x ajout mode 3 joueurs
 x ajout sélecteur
 x ajout mode 4 joueurs (bonus)
-- sauvegarde
-- pause en jeu
+x sauvegarde
+x pause en jeu
 - affichage controles
 
 Phase 3 :

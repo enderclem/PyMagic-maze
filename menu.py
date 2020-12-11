@@ -115,8 +115,7 @@ def new_game():
     lvl.menu_loop=False
     lvl.playing_loop=True
     timer.timer_paused=False
-    lvl.level_add_escalators()
-    lvl.share_actions(lvl.nbr_of_player)
+    lvl.load_new_level(display.level_size[0]//40, display.level_size[1]//40)
     selected=0
 
 

@@ -23,7 +23,7 @@ def check_collision(last_pos, new_pos):
         # Pour vérifier si on essaie de passer par un mur
         trajectory_target=lvl.meanings[lvl.level[last_pos[1]+direction[1]][last_pos[0]+direction[0]]]
 
-        if case_target != "wall" \
+        if case_target not in ("wall", "unexplored") \
         and new_pos not in lvl.pion_pos \
         and trajectory_target != "wall":
             return True
@@ -145,6 +145,8 @@ def player_act(p):
         player_vortex(p)
     elif action=="escalator":
         player_escalator(p)
+    elif action=="explore":
+        player_explore(p)
     # Ajouter ici si l'action est un vortex, escalator...
 
 
@@ -163,6 +165,40 @@ def player_move(direction, pion):
         display.display_pion(pion)
 
         check_hourglass_case(new_pos)
+
+
+def player_explore(p):
+    pion=lvl.selected_pion[p]
+    pion_name=lvl.pion_name[pion]
+    case_pos=lvl.pion_pos[pion]
+    case=lvl.level[case_pos[1]][case_pos[0]]
+    case_mean=lvl.meanings[case]
+
+    if case_mean=="explore "+pion_name:
+        if 1<case_pos[0]<len(lvl.level[0])-2 and 1<case_pos[1]<len(lvl.level)-2:
+            # Verifier aussi si ca ne sort pas du terrain
+            case_around={"x": {-1: lvl.meanings[lvl.level[case_pos[1]][case_pos[0]-2]],
+                               1: lvl.meanings[lvl.level[case_pos[1]][case_pos[0]+2]]}, 
+                        "y": {-1: lvl.meanings[lvl.level[case_pos[1]-2][case_pos[0]]],
+                               1: lvl.meanings[lvl.level[case_pos[1]+2][case_pos[0]]]}}
+
+            # Calcul de la position de la tuile à poser
+            tile_pos_x=case_pos[0] \
+                      +(case_around["x"][-1]=="unexplored")*-9 \
+                      +(case_around["x"][1] =="unexplored")*1 \
+                      +(case_around["y"][-1]=="unexplored")*-3 \
+                      +(case_around["y"][1] =="unexplored")*-5
+            tile_pos_y=case_pos[1] \
+                      +(case_around["x"][-1]=="unexplored")*-5 \
+                      +(case_around["x"][1] =="unexplored")*-3 \
+                      +(case_around["y"][-1]=="unexplored")*-9 \
+                      +(case_around["y"][1] =="unexplored")*1
+            # verifier si la tuile sort du terrain
+            if 0<=tile_pos_x<=len(lvl.level[0])-9 and 0<=tile_pos_y<=len(lvl.level)-9:
+                lvl.add_tile(tile_pos_x, tile_pos_y)
+
+        lvl.level[case_pos[1]][case_pos[0]]=" "
+        display.display_all_level()
 
 
 def player_vortex(p):

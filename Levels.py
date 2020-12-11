@@ -20,7 +20,7 @@ selected_pion = [0]
 selected_act = [0] 
 
 # Autres
-actions = ("go_left", "go_right", "go_up", "go_down", "vortex", "escalator")#, "explore") # Toutes les actions disponibles
+actions = ("go_left", "go_right", "go_up", "go_down", "vortex", "escalator", "explore") # Toutes les actions disponibles
 has_stolen=False
 deactive_hourglass=[]
 discussing=False
@@ -52,6 +52,7 @@ level = [
     ".#.#.H. . . . . . . . . . .#.#.",
     "..............................."
 ]
+tiles_left = []
 
 # Description de tout les symboles du niveau
 meanings = {
@@ -60,6 +61,7 @@ meanings = {
     " ": "None",
     "#": "wall",
     "§": "wall", # Murs entre les cases
+    "?": "unexplored",
     "c": "character",
     "$": "to steal magicienne",
     "£": "to steal elfe",
@@ -75,6 +77,10 @@ meanings = {
     "°": "vortex nain",
     "O": "vortex barbare",
     "e": "escalator",
+    "E": "explore magicienne",
+    "S": "explore elfe",
+    "s": "explore nain",
+    "&": "explore barbare",
 }
 
 # Les touches pour les différents controles en jeu, par joueur
@@ -178,6 +184,7 @@ def save_game(timer):
     save.write(text)
     save.close()
 
+
 def load_game():
     """
     Charge le jeu et retourne le timer.
@@ -207,4 +214,86 @@ def load_game():
     return timer
 
 
+def load_new_level(width, height):
+    """
+    Charge le niveau à partir des fichier
+    """
+    global level
+    global tiles_left
+    global pion_pos
 
+    level=[]
+    for y in range(height):
+        level.append(["?" for i in range(width*2+1)])
+        level.append(["?" for i in range(width*2+1)])
+    level.append(["?" for i in range(width*2+1)])
+
+    pos_tile=((width-1)//2*2-2, (height-1)//2*2-2)
+    print("pos_tile", pos_tile)
+
+    # Positionement des pions
+    pion_pos=[(pos_tile[0]+x*2+3, pos_tile[1]+y*2+3) for x in range(2) for y in range(2)]
+
+    # Chargement de la tuile de départ
+    start_tile=load_tiles("tiles/start.tile")[0]
+    print("start_tile", start_tile)
+    for y in range(9):
+        for x in range(9):
+            level[pos_tile[1]+y][pos_tile[0]+x]=start_tile[y][x]
+
+    # Chargement des tuiles piochables
+    tiles_left=load_tiles("tiles/classic.tile")
+
+    level_add_escalators()
+    share_actions(nbr_of_player)
+
+    print("DEBUT DE LA GAME")
+
+
+def add_tile(pos_x, pos_y):
+    global tiles_left
+    global level
+    global meanings
+    
+    if len(tiles_left)>0:
+        tile=tiles_left.pop(random.randrange(0, len(tiles_left)))
+    else:
+        print("Erreur : Il n'y a plus de tuile restantes !")
+        return None
+        
+    for y in range(9):
+        for x in range(9):
+            if not (meanings[level[pos_y+y][pos_x+x]]=="wall" and tile[y][x]=="None"):
+                level[pos_y+y][pos_x+x]=tile[y][x]
+
+    for y in range(9):
+        for x in range(9):
+            if "explore " in meanings[level[pos_y+y][pos_x+x]]:
+                can_explore=False
+                for d in ((-2, 0), (2, 0), (0, -2), (0, 2)):
+                    if 0<=pos_y+y+d[1]<len(level) and 0<=pos_x+x+d[0]<len(level[0]):
+                        if "explore " in meanings[level[pos_y+y+d[1]][pos_x+x+d[0]]]:
+                            level[pos_y+y+d[1]][pos_x+x+d[0]]=" "
+                        if meanings[level[pos_y+y+d[1]][pos_x+x+d[0]]]=="unexplored":
+                            can_explore=True
+                            break
+                if not can_explore:
+                    level[pos_y+y][pos_x+x]=" "
+
+
+
+    level_add_escalators()
+
+
+def load_tiles(path):
+    with open(path, "r") as file:
+        tiles=[[]]
+        for line in file.readlines():
+            if (line=="\n" or "/" in line) and tiles[-1]!=[]:
+                tiles.append([])
+            elif not (line=="\n" or "/" in line):
+                tiles[-1].append(line.strip().replace("Â", ""))
+
+        if [] in tiles:
+            tiles.remove([])
+        return tiles

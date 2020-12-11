@@ -1,7 +1,6 @@
 # Contient toutes les fonctions d'affichages.
 
 import upemtk as utk
-from levels import * # Importation en double à régler
 import levels as lvl
 import timer
 
@@ -39,57 +38,57 @@ def display_all_level():
 
 def display_between_cases():
 
-    for yy in range(0, len(level), 2):
-        for xx in range(1, len(level[yy]), 2):
+    for yy in range(0, len(lvl.level), 2):
+        for xx in range(1, len(lvl.level[yy]), 2):
             y=yy//2 # Calcul du numéro de la case
             x=xx//2
-            case = level[yy][xx]  # Récupération de la valeur la case en question
+            case = lvl.level[yy][xx]  # Récupération de la valeur la case en question
 
             # Centre de la position de la case en question
             case_pos = (x * 40 + 20 + level_pos[0], y * 40 + level_pos[1])
 
             # Affichage des murs
-            if meanings[case] == "wall":
+            if lvl.meanings[case] == "wall":
                 utk.image(case_pos[0], case_pos[1], "sprites/wall_horizontal.gif")
 
-    for yy in range(1, len(level), 2):
-        for xx in range(0, len(level[yy]), 2):
+    for yy in range(1, len(lvl.level), 2):
+        for xx in range(0, len(lvl.level[yy]), 2):
             y=yy//2 # Calcul du numéro de la case
             x=xx//2
-            case = level[yy][xx]  # Récupération de la valeur la case en question
+            case = lvl.level[yy][xx]  # Récupération de la valeur la case en question
 
             # Centre de la position de la case en question
             case_pos = (x * 40 + level_pos[0], y * 40 + 20 + level_pos[1])
 
             # Affichage des murs
-            if meanings[case] == "wall":
+            if lvl.meanings[case] == "wall":
                 utk.image(case_pos[0], case_pos[1], "sprites/wall_vertical.gif")
 
 
 def display_cases():
-    for yy in range(1, len(level), 2):
-        for xx in range(1, len(level[yy]), 2):
+    for yy in range(1, len(lvl.level), 2):
+        for xx in range(1, len(lvl.level[yy]), 2):
             y=yy//2 # Calcul du numéro de la case
             x=xx//2
-            case = level[yy][xx]  # Récupération de la valeur la case en question
+            case = lvl.level[yy][xx]  # Récupération de la valeur la case en question
 
             # Centre de la position de la case en question
             case_pos = (x * 40 + 20 + level_pos[0], y * 40 + 20 + level_pos[1])
 
             # Affichage du sol
-            if meanings[case] != "wall":
+            if lvl.meanings[case] not in ("wall", "unexplored"):
                 utk.image(case_pos[0], case_pos[1], "sprites/ground.gif")
 
             # Affichage des zones à voler
-            if "to steal" in meanings[case] and not lvl.has_stolen:
+            if "to steal" in lvl.meanings[case] and not lvl.has_stolen:
                 utk.image(case_pos[0], case_pos[1],
-                          "sprites/stuff_" + meanings[case].replace("to steal ", "") + ".gif", 
+                          "sprites/stuff_" + lvl.meanings[case].replace("to steal ", "") + ".gif", 
                           tag="to_steal")
 
             # Affichage des sorties
-            elif "exit" in meanings[case]:
+            elif "exit" in lvl.meanings[case]:
                 utk.image(case_pos[0], case_pos[1],
-                          "sprites/exit_" + meanings[case].replace("exit ", "") + ".gif")
+                          "sprites/exit_" + lvl.meanings[case].replace("exit ", "") + ".gif")
 
                 if not lvl.has_stolen:
                     utk.image(case_pos[0], case_pos[1],
@@ -97,7 +96,7 @@ def display_cases():
                               tag="closed")
 
             # Affichage des cases sabliers
-            elif meanings[case] == "flip hourglass":
+            elif lvl.meanings[case] == "flip hourglass":
                 utk.image(case_pos[0], case_pos[1],
                           "sprites/flip_hourglass.gif")
 
@@ -106,26 +105,31 @@ def display_cases():
                               "sprites/X.gif")
 
             # Affichage des cases sabliers
-            elif "vortex" in meanings[case]:
-                display_vortex(case_pos, meanings[case])
+            elif "vortex" in lvl.meanings[case]:
+                display_vortex(case_pos, lvl.meanings[case])
 
                 if lvl.has_stolen:
                     utk.image(case_pos[0], case_pos[1],
                           "sprites/X.gif")
 
+            # Affichage des cases explorer
+            if "explore " in lvl.meanings[case]:
+                utk.image(case_pos[0], case_pos[1],
+                          "sprites/magn_glass_" + lvl.meanings[case].replace("explore ", "") + ".gif")
+
 
     # Deuxième boucle identique à la première pour que les murs
     # soient chargés en dernier, au dessus des autres sprites
-    for yy in range(1, len(level), 2):
-        for xx in range(1, len(level[yy]), 2):
+    for yy in range(1, len(lvl.level), 2):
+        for xx in range(1, len(lvl.level[yy]), 2):
             y=yy//2 # Calcul du numéro de la case
             x=xx//2
-            case = level[yy][xx]  # Récupération de la valeur la case en question
+            case = lvl.level[yy][xx]  # Récupération de la valeur la case en question
 
             case_pos = (x * 40 + 20 + level_pos[0], y * 40 + 20 + level_pos[1])
             
             # Affichage des murs
-            if meanings[case] == "wall":
+            if lvl.meanings[case] == "wall":
                 utk.image(case_pos[0], case_pos[1], "sprites/wall.gif")
 
 
@@ -191,13 +195,13 @@ def display_pion(p):
     Réaffiche le pion indiqué.
     :param int p: numéro du pion
     """
-    utk.efface(pion_name[p])
+    utk.efface(lvl.pion_name[p])
 
     utk.image(
         lvl.pion_pos[p][0]//2 * 40 + 20 + level_pos[0],
         lvl.pion_pos[p][1]//2 * 40 + 20 + level_pos[1],
-        "sprites/" + pion_name[p] + ".gif",
-        tag=pion_name[p]
+        "sprites/" + lvl.pion_name[p] + ".gif",
+        tag=lvl.pion_name[p]
     )
 
 
@@ -229,7 +233,7 @@ def display_selected_pion(x, y, select_value, player_num=-1):
                       tag=tag_name)
         utk.image(
             x+20, y+i*40+20,
-            "sprites/" + pion_name[i] + ".gif",
+            "sprites/" + lvl.pion_name[i] + ".gif",
             tag=tag_name)
 
 
@@ -299,7 +303,6 @@ def display_vortex(case_pos, meaning_case):
     Affiche le vortex liée à la case et sa couleur.
     """
     sprite_name="sprites/"+meaning_case.replace(" ", "_")+".gif"
-
     utk.image(case_pos[0], case_pos[1],
               sprite_name)
 
@@ -310,7 +313,6 @@ def display_win():
     """
     utk.texte(win_size[0]/2, win_size[1]/2, "Vous avez gagné !",
               ancrage="center")
-
     utk.mise_a_jour()
 
 
@@ -325,7 +327,6 @@ def display_X_vortex():
             if "vortex" in lvl.meanings[case]:
                 # Centre de la position de la case en question
                 case_pos = (x//2 * 40 + 20 + level_pos[0], y//2 * 40 + 20 + level_pos[1])
-
                 utk.image(case_pos[0], case_pos[1],
                           "sprites/X.gif")
 
