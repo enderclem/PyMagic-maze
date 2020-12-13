@@ -115,7 +115,7 @@ def new_game():
     lvl.menu_loop=False
     lvl.playing_loop=True
     timer.timer_paused=False
-    lvl.load_new_level(display.level_size[0]//40, display.level_size[1]//40)
+    lvl.load_new_level(display.level_px[0]//40, display.level_px[1]//40)
     selected=0
 
 

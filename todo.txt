@@ -44,8 +44,28 @@ x pause en jeu
 - affichage controles
 
 Phase 3 :
-- ajout exploration(OOF)
-(action explorer, stockage/lecture des cartes, ajout sur le terrain)
-- Ajout extension garde
-- ajout extensions au choix
-
+x ajout exploration(OOF)
+- Création de toutes les tuiles
+- mise à jour sauvegarde
+x Ajout pion garde
+x Ajout garde de renfort
+- Rendre chaque garde différenciable dans la sélection
+--------------------
+- Ajout mur cassé (3 joker)
+- fixation des murs par les gardes au passage
+- télékinésie elfe
+--------------------
+- sort magicienne (yen a plein) :
+- sort balai (ok)
+- sort boule de cristal (non)
+- sort code (non)
+- sort echange (ok)
+- sort teleportation (?)
+- sort clairvoyance (oof)
+- sort fantome (ok)
+- sort grenouille (ok)
+- sort invisibilité
+- McTroolllald's
+--------------------
+- La salle des gardes
+- les portes blindés et les codes

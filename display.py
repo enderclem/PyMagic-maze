@@ -6,7 +6,9 @@ import timer
 
 win_size = (1200, 680)
 level_pos = (120, 20)  # Donne la position du coin supérieur gauche de l'affichage du niveau
-level_size = (960, 640)
+level_px = (960, 640)  # Taille du niveau en pixel
+level_size = (level_px[0]//20, level_px[1]//20)  
+
 
 def display_all_level():
     """
@@ -17,7 +19,7 @@ def display_all_level():
     utk.efface_tout()
 
     utk.rectangle(level_pos[0]-20, level_pos[1]-20, 
-                  level_pos[0]+level_size[0]+20, level_pos[1]+level_size[1]+20,
+                  level_pos[0]+level_px[0]+20, level_pos[1]+level_px[1]+20,
                   couleur="black",
                   remplissage="black",
                   epaisseur=0,
@@ -25,7 +27,7 @@ def display_all_level():
 
     display_cases()
     display_between_cases()
-    for i in range(4):
+    for i in range(len(lvl.pion_pos)):
         display_pion(i)
     display_selected_game()
     if lvl.player_using_vortex!=-1:
@@ -195,13 +197,13 @@ def display_pion(p):
     Réaffiche le pion indiqué.
     :param int p: numéro du pion
     """
-    utk.efface(lvl.pion_name[p])
+    utk.efface("pion"+str(p))
 
     utk.image(
         lvl.pion_pos[p][0]//2 * 40 + 20 + level_pos[0],
         lvl.pion_pos[p][1]//2 * 40 + 20 + level_pos[1],
         "sprites/" + lvl.pion_name[p] + ".gif",
-        tag=lvl.pion_name[p]
+        tag="pion"+str(p)
     )
 
 
@@ -211,7 +213,7 @@ def display_selected_game():
     """
     for i in range(lvl.nbr_of_player):
         # Calcul des position d'affichage
-        x = 5 + (level_pos[0] + level_size[0] + 20) * (i%2)
+        x = 5 + (level_pos[0] + level_px[0] + 20) * (i%2)
         y = 180 + 250 * (i>=2)
         
         display_selected_pion(x, y, lvl.selected_pion[i], i)
@@ -225,7 +227,7 @@ def display_selected_pion(x, y, select_value, player_num=-1):
     tag_name="select_p" + str(player_num)
     utk.efface(tag_name)
 
-    for i in range(4):
+    for i in range(len(lvl.pion_name)):
         utk.rectangle(x, y+i*40, x+40, y+(i+1)*40,
                       couleur="black",
                       remplissage="cyan" * (i==select_value),

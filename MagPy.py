@@ -31,6 +31,18 @@ def check_collision(last_pos, new_pos):
     return False    
 
 
+def check_guard(name, new_pos):
+    enemies=("magicienne", "elfe", "nain", "barbare")*(name=="garde") \
+           +tuple(["garde"])*(name!="garde") 
+
+    for pion in range(len(lvl.pion_pos)):
+        if lvl.pion_name[pion] in enemies \
+        and lvl.tiles_pos[new_pos]==lvl.tiles_pos[lvl.pion_pos[pion]]:
+            return False
+
+    return True
+
+
 def check_exit():
     """
     Retourne True si tous les joueurs ont atteint la sortie.
@@ -64,17 +76,24 @@ def check_hourglass_case(pos):
         display.display_discuss(x=10, y=130)
 
 
-def check_steal():
+def check_steal(input=None):
     """
     Regarde si les objets on été volés
     """
     for i in range(len(lvl.pion_pos)):
         case = lvl.level[lvl.pion_pos[i][1]][lvl.pion_pos[i][0]]
-        if lvl.meanings[case] != "to steal " + lvl.pion_name[i]:
+        if lvl.meanings[case] != "to steal " + lvl.pion_name[i] and input!="F12":
             return None
 
     lvl.has_stolen = True
     display.display_X_vortex()
+    for y in range(len(lvl.level)):
+        for x in range(len(lvl.level[y])):
+            if lvl.meanings[lvl.level[y][x]]=="reinforcement unactivated":
+                lvl.level[y][x]=lvl.meanings_reverse["reinforcement activated"]
+                lvl.pion_pos.append((x, y))
+                lvl.pion_name.append("garde")
+                display.display_pion(len(lvl.pion_pos)-1)
 
 def check_timer():
     global reason_stop
@@ -117,10 +136,10 @@ def player_choose(input):
             if "select player" in mean:
                 selection_delta=int(mean.replace("select player ", ""))
                 lvl.selected_pion[p]+=selection_delta
-                if lvl.selected_pion[p]>3:
+                if lvl.selected_pion[p]>=len(lvl.pion_name):
                     lvl.selected_pion[p]=0
                 elif lvl.selected_pion[p]<0:
-                    lvl.selected_pion[p]=3
+                    lvl.selected_pion[p]=len(lvl.pion_name)-1
 
             elif "select action" in mean:
                 selection_delta=int(mean.replace("select action ", ""))
@@ -160,7 +179,7 @@ def player_move(direction, pion):
     vec_move_y = (direction == "down")*2 - (direction == "up")*2
     new_pos = (pion_pos[0] + vec_move_x, pion_pos[1] + vec_move_y)
 
-    if check_collision(pion_pos, new_pos):
+    if check_collision(pion_pos, new_pos) and check_guard(lvl.pion_name[pion], new_pos):
         lvl.pion_pos[pion] = new_pos
         display.display_pion(pion)
 
@@ -195,7 +214,10 @@ def player_explore(p):
                       +(case_around["y"][1] =="unexplored")*1
             # verifier si la tuile sort du terrain
             if 0<=tile_pos_x<=len(lvl.level[0])-9 and 0<=tile_pos_y<=len(lvl.level)-9:
-                lvl.add_tile(tile_pos_x, tile_pos_y)
+                rotation=(case_around["x"][-1]=="unexplored")*3 \
+                        +(case_around["x"][1] =="unexplored") \
+                        +(case_around["y"][1] =="unexplored")*2
+                lvl.add_tile(tile_pos_x, tile_pos_y, rotation)
 
         lvl.level[case_pos[1]][case_pos[0]]=" "
         display.display_all_level()

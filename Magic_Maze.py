@@ -53,6 +53,7 @@ def main():
                     menu.pause_menu(input)
                 else:
                     player_choose(input)
+                    check_steal(input)
                     if input == "Escape":
                         print("affichage du menu pause")
                         menu.activate_pause_menu()

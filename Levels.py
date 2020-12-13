@@ -8,7 +8,7 @@ menu_loop=True
 playing_loop=False
 
 # Variables des pions
-pion_name = ("magicienne", "elfe", "nain", "barbare")
+pion_name = ["magicienne", "elfe", "nain", "barbare"]
 pion_pos = [(13, 9), (13, 11), (15, 9), (15, 11)]
 # pion_pos = [(5, 3), (27, 3), (27, 17), (3, 17)]
 
@@ -53,6 +53,8 @@ level = [
     "..............................."
 ]
 tiles_left = []
+tiles_pos = dict()
+tiles_nbr = 0
 
 # Description de tout les symboles du niveau
 meanings = {
@@ -81,7 +83,12 @@ meanings = {
     "S": "explore elfe",
     "s": "explore nain",
     "&": "explore barbare",
+    "G": "guard",
+    "R": "reinforcement unactivated",
+    "r": "reinforcement activated",
 }
+
+meanings_reverse={meanings[m]: m for m in meanings.keys()}
 
 # Les touches pour les différents controles en jeu, par joueur
 controller = [{
@@ -163,7 +170,8 @@ def save_game(timer):
     # Sauvegarde du timer
     text+="timer="+str(timer)+"\n"
     # Sauvegarde des positions des pions
-    for i in range(4):
+    text+="nbr of pion="+str(len(pion_pos))+"\n"
+    for i in range(len(pion_pos)):
         text+=pion_name[i]+" position="+str(pion_pos[i][0])+","+str(pion_pos[i][1])+"\n"
     # Sauvegarde du nombre de joueurs
     text+="nbr of player="+str(nbr_of_player)+"\n"
@@ -175,42 +183,69 @@ def save_game(timer):
         text+="\n"
     # Sauvegarde de la variable has_stolen
     text+="has stolen="+str(int(has_stolen))+"\n"
-    # Sauvegarde du niveau
-    text+="\nlevel=\n"
-    for line in level:
-        text+=line+"\n"
 
-    save=open("save.save", "w")
-    save.write(text)
-    save.close()
+    with open("save/save.save", "w") as save:
+        save.write(text)
+
+    # Sauvegarde du niveau
+    save_tiles("save/level.tile", [level])
+
+    # Sauvegarde des tuiles piochables
+    save_tiles("save/tiles.tile", tiles_left)
+
+    # Sauvegarde des position des tuiles
+    text="tiles nbr="+str(tiles_nbr)+"\n"
+    for pos in tiles_pos.keys():
+        text += str(pos[0])+","+str(pos[1])+":"+str(tiles_pos[pos])+"\n"
+    with open("save/tiles_pos.save", "w") as file:
+        file.write(text)
 
 
 def load_game():
     """
-    Charge le jeu et retourne le timer.
+    Charge la sauvegarde du jeu et retourne le timer.
     """
-    global pion_pos, nbr_of_player, players_act, has_stolen
+    global pion_pos, nbr_of_player, players_act, has_stolen, pion_name, level, tiles_pos, tiles_nbr
 
-    save=open("save.save", 'r')
-    # Chargement du timer
-    timer=float(save.readline().split('=')[1])
-    # Chargement des positions des pions
-    pos=[]
-    for i in range(4):
-        value=save.readline().split('=')[1].split(',')
-        pos.append((int(value[0]), int(value[1])))
-    pion_pos=pos
-    # Chargement du nbr de joueur
-    nbr_of_player=int(save.readline().split('=')[1])
-    # Chargement des actions des joueurs
-    players_act=[]
-    for i in range(nbr_of_player):
-        values=save.readline().split('=')[1].split(',')
-        players_act.append([val.replace("\n", "") for val in values])
-    # Chargement du booleen has_stolen
-    has_stolen=bool(int(save.readline().split('=')[1]))
+    with open("save/save.save", 'r') as save:
+        # Chargement du timer
+        timer=float(save.readline().split('=')[1])
+        # Chargement des positions des pions et de leurs nom
+        pion_pos=[]
+        pion_name=[]
+        nbr_pion=int(save.readline().split('=')[1])
+        for i in range(nbr_pion):
+            line=save.readline().split('=')
+            pion_name.append(line[0].replace(" position", ""))
+            value=line[1].split(',')
+            pion_pos.append((int(value[0]), int(value[1])))
+        # Chargement du nbr de joueur
+        nbr_of_player=int(save.readline().split('=')[1])
+        # Chargement des actions des joueurs
+        players_act=[]
+        for i in range(nbr_of_player):
+            values=save.readline().split('=')[1].split(',')
+            players_act.append([val.replace("\n", "") for val in values])
+        # Chargement du booleen has_stolen
+        has_stolen=bool(int(save.readline().split('=')[1]))
+        # Chargement du niveau
+        lvl_tile=load_tiles("save/level.tile")[0]
+        level=[]
+        for line in lvl_tile:
+            level.append([c for c in line])
 
     level_add_escalators()
+    # Chargement des tuiles piochables
+    tiles_left=load_tiles("save/tiles.tile")
+
+    # Chargement des positions des tuiles
+    with open("save/tiles_pos.save", "r") as save:
+        tiles_nbr=save.readline().split("=")[1]
+        for line in save.readlines():
+            line=line.split(":")
+            line[0]=line[0].split(",")
+            tiles_pos[(int(line[0][0]), int(line[0][1]))]=int(line[1])
+
     return timer
 
 
@@ -221,6 +256,7 @@ def load_new_level(width, height):
     global level
     global tiles_left
     global pion_pos
+    global tiles_pos, tiles_nbr
 
     level=[]
     for y in range(height):
@@ -240,6 +276,8 @@ def load_new_level(width, height):
     for y in range(9):
         for x in range(9):
             level[pos_tile[1]+y][pos_tile[0]+x]=start_tile[y][x]
+            tiles_pos[(pos_tile[0]+x, pos_tile[1]+y)]=0
+    tiles_nbr=1
 
     # Chargement des tuiles piochables
     tiles_left=load_tiles("tiles/classic.tile")
@@ -250,10 +288,9 @@ def load_new_level(width, height):
     print("DEBUT DE LA GAME")
 
 
-def add_tile(pos_x, pos_y):
-    global tiles_left
-    global level
-    global meanings
+def add_tile(pos_x, pos_y, rotate=0):
+    global tiles_left,  tiles_pos, tiles_nbr
+    global level, meanings
     
     if len(tiles_left)>0:
         tile=tiles_left.pop(random.randrange(0, len(tiles_left)))
@@ -261,10 +298,30 @@ def add_tile(pos_x, pos_y):
         print("Erreur : Il n'y a plus de tuile restantes !")
         return None
         
+    for i in range(rotate):
+        rotated=[]
+        for y in range(9):
+            rotated.append([])
+            for x in range(9):
+                rotated[-1].append(tile[8-x][y])
+        tile=rotated
+
     for y in range(9):
         for x in range(9):
             if not (meanings[level[pos_y+y][pos_x+x]]=="wall" and tile[y][x]=="None"):
+                # Ajout de la case
                 level[pos_y+y][pos_x+x]=tile[y][x]
+                tiles_pos[(pos_x+x, pos_y+y)]=tiles_nbr
+
+                # Ajout des gardes
+                if meanings[tile[y][x]]=="guard":
+                    pion_pos.append((pos_x+x, pos_y+y))
+                    pion_name.append("garde")
+                if meanings[tile[y][x]]=="reinforcement unactivated" and has_stolen:
+                    level[pos_y+y][pos_x+x]=meanings_reverse["reinforcement activated"]
+                    pion_pos.append((pos_x+x, pos_y+y))
+                    pion_name.append("garde")
+    tiles_nbr+=1
 
     for y in range(9):
         for x in range(9):
@@ -280,12 +337,13 @@ def add_tile(pos_x, pos_y):
                 if not can_explore:
                     level[pos_y+y][pos_x+x]=" "
 
-
-
     level_add_escalators()
 
 
 def load_tiles(path):
+    """
+    Retourne les tuiles du fichier indiqué.
+    """
     with open(path, "r") as file:
         tiles=[[]]
         for line in file.readlines():
@@ -297,3 +355,18 @@ def load_tiles(path):
         if [] in tiles:
             tiles.remove([])
         return tiles
+
+
+def save_tiles(path, tiles):
+    """
+    Sauvegarde les tuiles dans le fichier indiqué.
+    """
+    text=""
+    for tile in tiles:
+        for line in tile:
+            text += "".join(line)+"\n"
+        text+="\n"
+
+    with open(path, "w") as file:
+        file.write(text)
+
