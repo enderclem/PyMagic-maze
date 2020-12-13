@@ -1,10 +1,9 @@
-timer=147.229660987854
-nbr of pion=5
-magicienne position=29,9
+timer=171.9412670135498
+nbr of pion=4
+magicienne position=23,15
 elfe position=23,17
 nain position=25,15
 barbare position=25,17
-garde position=37,7
 nbr of player=1
-J0 actions=vortex,go_down,escalator,go_right,go_up,go_left,explore
+J0 actions=go_down,go_right,escalator,go_up,explore,vortex,go_left
 has stolen=0

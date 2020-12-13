@@ -7,7 +7,6 @@ import timer
 win_size = (1200, 680)
 level_pos = (120, 20)  # Donne la position du coin supérieur gauche de l'affichage du niveau
 level_px = (960, 640)  # Taille du niveau en pixel
-level_size = (level_px[0]//20, level_px[1]//20)  
 
 
 def display_all_level():
@@ -216,45 +215,37 @@ def display_selected_game():
         x = 5 + (level_pos[0] + level_px[0] + 20) * (i%2)
         y = 180 + 250 * (i>=2)
         
-        display_selected_pion(x, y, lvl.selected_pion[i], i)
-        display_selected_action(x+50, y, lvl.selected_act[i], lvl.players_act[i], i)
+        select=lvl.selected_pion[i]
+        pion_n=[lvl.pion_name[j+select-1-len(lvl.pion_name)*(j+select-1>=len(lvl.pion_name))] for j in range(4)]
+
+        display_selected_ingame(x, y, 1, pion_n, "select_p"+str(i))
+        display_selected_ingame(x+50, y, lvl.selected_act[i], lvl.players_act[i], "select_a"+str(i))
 
 
-def display_selected_pion(x, y, select_value, player_num=-1):
+def display_selected_ingame(x, y, select_value, list_choice, tag_name="default"):
     """
     Affiche le pion sélectionné en jeu.
     """
-    tag_name="select_p" + str(player_num)
     utk.efface(tag_name)
 
-    for i in range(len(lvl.pion_name)):
-        utk.rectangle(x, y+i*40, x+40, y+(i+1)*40,
+    utk.image(
+        x+20, y+10,
+        "sprites/select_arrow_up.gif",
+        tag=tag_name)
+    utk.image(
+        x+20, y+len(list_choice)*40+30,
+        "sprites/select_arrow_down.gif",
+        tag=tag_name)
+
+    for i in range(len(list_choice)):
+        utk.rectangle(x, y+i*40+20, x+40, y+(i+1)*40+20,
                       couleur="black",
                       remplissage="cyan" * (i==select_value),
                       epaisseur=2,
                       tag=tag_name)
         utk.image(
-            x+20, y+i*40+20,
-            "sprites/" + lvl.pion_name[i] + ".gif",
-            tag=tag_name)
-
-
-def display_selected_action(x, y, select_value, list_actions, player_num=-1):
-    """
-    Affiche le pion sélectionné en jeu.
-    """
-    tag_name="select_a" + str(player_num)
-    utk.efface(tag_name)
-
-    for i in range(len(list_actions)):
-        utk.rectangle(x, y+i*40, x+40, y+(i+1)*40,
-                      couleur="black",
-                      remplissage="cyan" * (i==select_value),
-                      epaisseur=2,
-                      tag=tag_name)
-        utk.image(
-            x+20, y+i*40+20,
-            "sprites/" + list_actions[i] + ".gif",
+            x+20, y+i*40+40,
+            "sprites/" + list_choice[i] + ".gif",
             tag=tag_name)
 
 
@@ -381,6 +372,12 @@ def init_pause():
     display_pause(0, ("Reprendre", "Sauvegarder", "Quitter"))
 
 
+def display_control():
+    utk.image(win_size[0]//2, win_size[1]//2,
+              "sprites/control.gif",
+              tag="choice")
+
+
 def display_pause(selected, menu_choice):
     """
     Affiche tout le menu.
@@ -429,7 +426,6 @@ def display_save_success():
               ancrage="center",
               police="Purisa",
               taille="16")
-
 
 
 def display_menu(selected, menu_choice):

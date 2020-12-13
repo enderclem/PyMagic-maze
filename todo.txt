@@ -15,7 +15,7 @@ x escalator
 - mur plein
 - mur entre cases
 x sol
-- commandes de jeu
+x commandes de jeu
 - discuss amelioration
 
 Phase 1 :
@@ -41,12 +41,12 @@ x ajout sélecteur
 x ajout mode 4 joueurs (bonus)
 x sauvegarde
 x pause en jeu
-- affichage controles
+x affichage controles
 
 Phase 3 :
 x ajout exploration(OOF)
 - Création de toutes les tuiles
-- mise à jour sauvegarde
+x mise à jour sauvegarde
 x Ajout pion garde
 x Ajout garde de renfort
 - Rendre chaque garde différenciable dans la sélection

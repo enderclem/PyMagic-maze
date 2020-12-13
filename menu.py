@@ -78,6 +78,8 @@ def main_menu(input):
     else:
         display.display_menu(selected,
                              menu_choice[menu_sel])
+        if menu_sel==commands_val:
+            display.display_control()
 
 
 def change_selected(input, selected):
