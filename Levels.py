@@ -28,6 +28,9 @@ player_using_vortex=-1
 selected_vortex=(1, 1)
 escalator={}
 
+# Gardes
+nbr_guards=0
+
 # Matrice du niveau
 level = [
     "...............................",
@@ -58,16 +61,16 @@ tiles_nbr = 0
 
 # Description de tout les symboles du niveau
 meanings = {
-    ".": "None", # Positions vides entre les cases
-    "_": "None", # Juste pour mieux voir les persos sur les cases
+    ".": "None",
+    "_": "None",
     " ": "None",
     "#": "wall",
-    "§": "wall", # Murs entre les cases
+    "§": "wall",
     "?": "unexplored",
     "c": "character",
     "$": "to steal magicienne",
     "£": "to steal elfe",
-    "€": "to steal nain",
+    "M": "to steal nain",
     "@": "to steal barbare",
     "(": "exit magicienne",
     ")": "exit elfe",
@@ -118,6 +121,18 @@ controller = [{
 }]
 
 
+def add_guards():
+    global level, nbr_guards, pion_pos, pion_name, meanings
+    for y in range(len(level)):
+        for x in range(len(level[y])):
+            if meanings[level[y][x]]=="guard" \
+            or (meanings[level[y][x]]=="reinforcement unactivated" and has_stolen):
+                pion_pos.append((x, y))
+                pion_name.append("garde_"+str(nbr_guards))
+                level[y][x]=meanings_reverse["reinforcement activated"]
+                nbr_guards+=1
+
+
 def share_actions(nbr_of_player):
     """
     Créer une liste contenant une liste d'actions disponible pour chaque joueur.
@@ -157,7 +172,7 @@ def level_add_escalators():
             if meanings[level[y][x]]=="escalator" and (x,y) not in escalator.keys():
                 for i in range(0, 5, 2):
                     for j in range(-4*(i!=0) + 2*(i==0), 5, 2):
-                        if meanings[level[y+i][x+j]]=="escalator":
+                        if meanings[level[y+i][x+j]]=="escalator" and tiles_pos[(x+j, y+i)]==tiles_pos[(x, y)]:
                             escalator[(x, y)]=(x+j, y+i)
                             escalator[(x+j, y+i)]=(x, y)
 
@@ -292,8 +307,11 @@ def add_tile(pos_x, pos_y, rotate=0):
     global tiles_left,  tiles_pos, tiles_nbr
     global level, meanings
     
+    tile=None
     if len(tiles_left)>0:
         tile=tiles_left.pop(random.randrange(0, len(tiles_left)))
+        for line in tile:
+            print(line)
     else:
         print("Erreur : Il n'y a plus de tuile restantes !")
         return None
@@ -303,6 +321,14 @@ def add_tile(pos_x, pos_y, rotate=0):
         for y in range(9):
             rotated.append([])
             for x in range(9):
+
+                """print("\nrotated :")
+                for l in rotated:
+                    print(l)
+                print("\ntile :")
+                for l in tile:
+                    print(l)"""
+                
                 rotated[-1].append(tile[8-x][y])
         tile=rotated
 
@@ -314,13 +340,7 @@ def add_tile(pos_x, pos_y, rotate=0):
                 tiles_pos[(pos_x+x, pos_y+y)]=tiles_nbr
 
                 # Ajout des gardes
-                if meanings[tile[y][x]]=="guard":
-                    pion_pos.append((pos_x+x, pos_y+y))
-                    pion_name.append("garde")
-                if meanings[tile[y][x]]=="reinforcement unactivated" and has_stolen:
-                    level[pos_y+y][pos_x+x]=meanings_reverse["reinforcement activated"]
-                    pion_pos.append((pos_x+x, pos_y+y))
-                    pion_name.append("garde")
+                add_guards()
     tiles_nbr+=1
 
     for y in range(9):

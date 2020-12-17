@@ -32,8 +32,11 @@ def check_collision(last_pos, new_pos):
 
 
 def check_guard(name, new_pos):
-    enemies=("magicienne", "elfe", "nain", "barbare")*(name=="garde") \
-           +tuple(["garde"])*(name!="garde") 
+    enemies=None
+    if "garde" in name:
+        enemies=("magicienne", "elfe", "nain", "barbare")
+    else:
+        enemies=tuple(["garde_"+str(i) for i in range(lvl.nbr_guards)])
 
     for pion in range(len(lvl.pion_pos)):
         if lvl.pion_name[pion] in enemies \
@@ -87,13 +90,15 @@ def check_steal(input=None):
 
     lvl.has_stolen = True
     display.display_X_vortex()
-    for y in range(len(lvl.level)):
+    """for y in range(len(lvl.level)):
         for x in range(len(lvl.level[y])):
             if lvl.meanings[lvl.level[y][x]]=="reinforcement unactivated":
                 lvl.level[y][x]=lvl.meanings_reverse["reinforcement activated"]
                 lvl.pion_pos.append((x, y))
-                lvl.pion_name.append("garde")
-                display.display_pion(len(lvl.pion_pos)-1)
+                lvl.pion_name.append("garde")"""
+    lvl.add_guards()
+    for pion in range(len(lvl.pion_name)):
+        display.display_pion(pion)
 
 def check_timer():
     global reason_stop

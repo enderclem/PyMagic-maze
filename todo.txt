@@ -17,6 +17,8 @@ x escalator
 x sol
 x commandes de jeu
 - discuss amelioration
+- zone de guarde
+- zone de renfort
 
 Phase 1 :
 x niveau 10x15
@@ -49,7 +51,9 @@ x ajout exploration(OOF)
 x mise à jour sauvegarde
 x Ajout pion garde
 x Ajout garde de renfort
-- Rendre chaque garde différenciable dans la sélection
+x Rendre chaque garde différenciable dans la sélection
+x Repare conflit escalator entre tuile
+- fixe téléportation (detection de pion sur les cases vortex + detection FBI dans la zone)
 --------------------
 - Ajout mur cassé (3 joker)
 - fixation des murs par les gardes au passage
@@ -60,12 +64,12 @@ x Ajout garde de renfort
 - sort boule de cristal (non)
 - sort code (non)
 - sort echange (ok)
-- sort teleportation (?)
+- sort teleportation (ok)
 - sort clairvoyance (oof)
 - sort fantome (ok)
 - sort grenouille (ok)
 - sort invisibilité
-- McTroolllald's
+- McTroollald's
 --------------------
 - La salle des gardes
 - les portes blindés et les codes
