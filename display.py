@@ -118,6 +118,11 @@ def display_cases():
                 utk.image(case_pos[0], case_pos[1],
                           "sprites/magn_glass_" + lvl.meanings[case].replace("explore ", "") + ".gif")
 
+            # Affichage des cases sabliers
+            elif lvl.meanings[case] == "reinforcement unactivated":
+                utk.image(case_pos[0], case_pos[1],
+                          "sprites/reinforcement.gif")
+
 
     # Deuxième boucle identique à la première pour que les murs
     # soient chargés en dernier, au dessus des autres sprites

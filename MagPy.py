@@ -89,7 +89,7 @@ def check_steal(input=None):
             return None
 
     lvl.has_stolen = True
-    display.display_X_vortex()
+    # display.display_X_vortex()
     """for y in range(len(lvl.level)):
         for x in range(len(lvl.level[y])):
             if lvl.meanings[lvl.level[y][x]]=="reinforcement unactivated":
@@ -97,8 +97,9 @@ def check_steal(input=None):
                 lvl.pion_pos.append((x, y))
                 lvl.pion_name.append("garde")"""
     lvl.add_guards()
-    for pion in range(len(lvl.pion_name)):
-        display.display_pion(pion)
+    #for pion in range(len(lvl.pion_name)):
+     #   display.display_pion(pion)
+    display.display_all_level()
 
 def check_timer():
     global reason_stop
@@ -272,7 +273,9 @@ def vortex_selection(input):
     p=lvl.player_using_vortex
     control=lvl.controller[p]
     vort=lvl.selected_vortex
-    pion_name=lvl.pion_name[lvl.selected_pion[p]]
+    pion=lvl.selected_pion[p]
+    pion_name=lvl.pion_name[pion]
+    pion_pos_others=lvl.pion_pos[0:pion]+lvl.pion_pos[pion+1:len(lvl.pion_pos)]
 
     if input in control.keys():
         if "select" in control[input]:
@@ -285,8 +288,7 @@ def vortex_selection(input):
 
             for y in range(y_start, y_end, select_delta*2):
                 for x in range(x_start, x_end, select_delta*2):
-                    if lvl.meanings[lvl.level[y][x]] == "vortex "+pion_name:
-
+                    if lvl.meanings[lvl.level[y][x]] == "vortex "+pion_name and check_guard(pion_name, (x, y)) and (x, y) not in pion_pos_others:
                         lvl.selected_vortex=(x, y)
                         display.display_selected_vortex()
                         return None

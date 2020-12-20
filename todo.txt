@@ -17,8 +17,8 @@ x escalator
 x sol
 x commandes de jeu
 - discuss amelioration
-- zone de guarde
-- zone de renfort
+x zone de renfort
+- fleche vrai sélection vortex
 
 Phase 1 :
 x niveau 10x15
@@ -54,6 +54,9 @@ x Ajout garde de renfort
 x Rendre chaque garde différenciable dans la sélection
 x Repare conflit escalator entre tuile
 - fixe téléportation (detection de pion sur les cases vortex + detection FBI dans la zone)
+- Rendre l'exploration sans feinte pour le joueur (montrer que on peut pas visiter au bord de la carte)
+- fixe beug escalator coin bas gauche
+- fixe timer (stop a 0:59)
 --------------------
 - Ajout mur cassé (3 joker)
 - fixation des murs par les gardes au passage

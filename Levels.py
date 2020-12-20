@@ -172,6 +172,13 @@ def level_add_escalators():
             if meanings[level[y][x]]=="escalator" and (x,y) not in escalator.keys():
                 for i in range(0, 5, 2):
                     for j in range(-4*(i!=0) + 2*(i==0), 5, 2):
+                        print("Debug escalator :")
+                        print("y :", y, "x :", x, "i :", i, "j :", j)
+                        print("level :")
+                        print(level)
+                        print("tiles_pos :",tiles_pos)
+                        print("(x+j, y+i) in tiles_pos.keys() :", (x+j, y+i) in tiles_pos.keys())
+                        print("(x, y) in tiles_pos.keys() :", (x, y) in tiles_pos.keys())
                         if meanings[level[y+i][x+j]]=="escalator" and tiles_pos[(x+j, y+i)]==tiles_pos[(x, y)]:
                             escalator[(x, y)]=(x+j, y+i)
                             escalator[(x+j, y+i)]=(x, y)
@@ -249,10 +256,6 @@ def load_game():
         for line in lvl_tile:
             level.append([c for c in line])
 
-    level_add_escalators()
-    # Chargement des tuiles piochables
-    tiles_left=load_tiles("save/tiles.tile")
-
     # Chargement des positions des tuiles
     with open("save/tiles_pos.save", "r") as save:
         tiles_nbr=save.readline().split("=")[1]
@@ -260,6 +263,11 @@ def load_game():
             line=line.split(":")
             line[0]=line[0].split(",")
             tiles_pos[(int(line[0][0]), int(line[0][1]))]=int(line[1])
+
+    # Chargement des escalators
+    level_add_escalators()
+    # Chargement des tuiles piochables
+    tiles_left=load_tiles("save/tiles.tile")
 
     return timer
 
