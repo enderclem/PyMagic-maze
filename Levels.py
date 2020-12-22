@@ -23,7 +23,7 @@ selected_act = [0]
 nbr_guards=0
 
 # Sorts magiques
-spells_all=("spell_balai", "spell_echange", "spell_teleport", "spell_fantome", "spell_grenouille", "spell_invisibilite", "spell_appat")
+spells_all=("spell_balai", "spell_echange", "spell_teleportation", "spell_fantome", "spell_grenouille", "spell_invisibilite", "spell_appat")
 nbr_spells=2
 
 # Autres

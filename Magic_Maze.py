@@ -78,10 +78,14 @@ def refresh_display():
     Reinitialise l'affichage du jeu pour éviter un certain bug.
     """
     global next_refresh
-    if time.process_time()>next_refresh and lvl.playing_loop and not menu.paused:
+    if time.process_time()>next_refresh and lvl.playing_loop: # and not menu.paused:
         while time.process_time()>next_refresh:
             next_refresh+=10
         display.display_all_level()
+        if menu.paused:
+            display.init_pause()
+            display.display_pause(menu.selected, menu.menu_choice[menu.menu_sel])
+
 
 
 if __name__ == '__main__':
