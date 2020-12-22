@@ -19,6 +19,13 @@ players_act = [] # Actions partagées entre les joueurs
 selected_pion = [0] 
 selected_act = [0] 
 
+# Gardes
+nbr_guards=0
+
+# Sorts magiques
+spells_all=("balais", "echange", "teleport", "fantome", "grenouille", "invisibilite", "appat")
+nbr_spells=2
+
 # Autres
 actions = ("go_left", "go_right", "go_up", "go_down", "vortex", "escalator", "explore") # Toutes les actions disponibles
 has_stolen=False
@@ -27,9 +34,6 @@ discussing=False
 player_using_vortex=-1
 selected_vortex=(1, 1)
 escalator={}
-
-# Gardes
-nbr_guards=0
 
 # Matrice du niveau
 level = [
@@ -133,6 +137,103 @@ def add_guards():
                 nbr_guards+=1
 
 
+def add_tile(pos_x, pos_y, rotate=0):
+    global tiles_left,  tiles_pos, tiles_nbr
+    global level, meanings
+    
+    tile=None
+    if len(tiles_left)>0:
+        tile=tiles_left.pop(random.randrange(0, len(tiles_left)))
+        for line in tile:
+            print(line)
+    else:
+        print("Erreur : Il n'y a plus de tuile restantes !")
+        return None
+        
+    for i in range(rotate):
+        rotated=[]
+        for y in range(9):
+            rotated.append([])
+            for x in range(9):
+
+                """print("\nrotated :")
+                for l in rotated:
+                    print(l)
+                print("\ntile :")
+                for l in tile:
+                    print(l)"""
+                
+                rotated[-1].append(tile[8-x][y])
+        tile=rotated
+
+    for y in range(9):
+        for x in range(9):
+            if not (meanings[level[pos_y+y][pos_x+x]]=="wall" and tile[y][x]=="None"):
+                # Ajout de la case
+                level[pos_y+y][pos_x+x]=tile[y][x]
+                tiles_pos[(pos_x+x, pos_y+y)]=tiles_nbr
+
+                # Ajout des gardes
+                add_guards()
+    tiles_nbr+=1
+
+    # Suppression des cases explorer inutiles
+    for y in range(9):
+        for x in range(9):
+            # Si la case est une case explorer
+            if "explore " in meanings[level[pos_y+y][pos_x+x]] and explore_info((pos_x+x, pos_y+y)) is None:
+                level[pos_y+y][pos_x+x]=" "
+
+    level_add_escalators()
+
+
+def explore_info(case_pos):
+    """
+    Retourne la position et la rotation, ou None si le case n'est pas explorable.
+    """
+    global level, meanings
+
+    case=level[case_pos[1]][case_pos[0]]
+    case_mean=meanings[case]
+
+    if "explore " in case_mean:
+        can_explore=False
+        # vérification que on peut explorer une tuile non exploré
+        for d in ((-2, 0), (2, 0), (0, -2), (0, 2)):
+            if 0<=case_pos[1]+d[1]<len(level) and case_pos[0]+d[0]<len(level[0]):
+                if "explore " in meanings[level[case_pos[1]+d[1]][case_pos[0]+d[0]]]:
+                    level[case_pos[1]+d[1]][case_pos[0]+d[0]]=" "
+                if meanings[level[case_pos[1]+d[1]][case_pos[0]+d[0]]]=="unexplored":
+                    can_explore=True
+                    break
+
+        if can_explore:
+            case_around={"x": {-1: meanings[level[case_pos[1]][case_pos[0]-2]],
+                               1: meanings[level[case_pos[1]][case_pos[0]+2]]}, 
+                        "y": {-1: meanings[level[case_pos[1]-2][case_pos[0]]],
+                               1: meanings[level[case_pos[1]+2][case_pos[0]]]}}
+
+            # Calcul de la position de la tuile à poser
+            tile_pos_x=case_pos[0] \
+                      +(case_around["x"][-1]=="unexplored")*-9 \
+                      +(case_around["x"][1] =="unexplored")*1 \
+                      +(case_around["y"][-1]=="unexplored")*-3 \
+                      +(case_around["y"][1] =="unexplored")*-5
+            tile_pos_y=case_pos[1] \
+                      +(case_around["x"][-1]=="unexplored")*-5 \
+                      +(case_around["x"][1] =="unexplored")*-3 \
+                      +(case_around["y"][-1]=="unexplored")*-9 \
+                      +(case_around["y"][1] =="unexplored")*1
+            # verifier si la tuile sort du terrain
+            if 0<=tile_pos_x<=len(level[0])-9 and 0<=tile_pos_y<=len(level)-9:
+                rotation=(case_around["x"][-1]=="unexplored")*3 \
+                        +(case_around["x"][1] =="unexplored") \
+                        +(case_around["y"][1] =="unexplored")*2
+                return ((tile_pos_x, tile_pos_y), rotation)
+
+    return None
+
+
 def share_actions(nbr_of_player):
     """
     Créer une liste contenant une liste d'actions disponible pour chaque joueur.
@@ -172,14 +273,8 @@ def level_add_escalators():
             if meanings[level[y][x]]=="escalator" and (x,y) not in escalator.keys():
                 for i in range(0, 5, 2):
                     for j in range(-4*(i!=0) + 2*(i==0), 5, 2):
-                        print("Debug escalator :")
-                        print("y :", y, "x :", x, "i :", i, "j :", j)
-                        print("level :")
-                        print(level)
-                        print("tiles_pos :",tiles_pos)
-                        print("(x+j, y+i) in tiles_pos.keys() :", (x+j, y+i) in tiles_pos.keys())
-                        print("(x, y) in tiles_pos.keys() :", (x, y) in tiles_pos.keys())
-                        if meanings[level[y+i][x+j]]=="escalator" and tiles_pos[(x+j, y+i)]==tiles_pos[(x, y)]:
+                        if 0<=y+i<len(level) and 0<=x+j<len(level[0]) \
+                        and meanings[level[y+i][x+j]]=="escalator" and tiles_pos[(x+j, y+i)]==tiles_pos[(x, y)]:
                             escalator[(x, y)]=(x+j, y+i)
                             escalator[(x+j, y+i)]=(x, y)
 
@@ -309,63 +404,6 @@ def load_new_level(width, height):
     share_actions(nbr_of_player)
 
     print("DEBUT DE LA GAME")
-
-
-def add_tile(pos_x, pos_y, rotate=0):
-    global tiles_left,  tiles_pos, tiles_nbr
-    global level, meanings
-    
-    tile=None
-    if len(tiles_left)>0:
-        tile=tiles_left.pop(random.randrange(0, len(tiles_left)))
-        for line in tile:
-            print(line)
-    else:
-        print("Erreur : Il n'y a plus de tuile restantes !")
-        return None
-        
-    for i in range(rotate):
-        rotated=[]
-        for y in range(9):
-            rotated.append([])
-            for x in range(9):
-
-                """print("\nrotated :")
-                for l in rotated:
-                    print(l)
-                print("\ntile :")
-                for l in tile:
-                    print(l)"""
-                
-                rotated[-1].append(tile[8-x][y])
-        tile=rotated
-
-    for y in range(9):
-        for x in range(9):
-            if not (meanings[level[pos_y+y][pos_x+x]]=="wall" and tile[y][x]=="None"):
-                # Ajout de la case
-                level[pos_y+y][pos_x+x]=tile[y][x]
-                tiles_pos[(pos_x+x, pos_y+y)]=tiles_nbr
-
-                # Ajout des gardes
-                add_guards()
-    tiles_nbr+=1
-
-    for y in range(9):
-        for x in range(9):
-            if "explore " in meanings[level[pos_y+y][pos_x+x]]:
-                can_explore=False
-                for d in ((-2, 0), (2, 0), (0, -2), (0, 2)):
-                    if 0<=pos_y+y+d[1]<len(level) and 0<=pos_x+x+d[0]<len(level[0]):
-                        if "explore " in meanings[level[pos_y+y+d[1]][pos_x+x+d[0]]]:
-                            level[pos_y+y+d[1]][pos_x+x+d[0]]=" "
-                        if meanings[level[pos_y+y+d[1]][pos_x+x+d[0]]]=="unexplored":
-                            can_explore=True
-                            break
-                if not can_explore:
-                    level[pos_y+y][pos_x+x]=" "
-
-    level_add_escalators()
 
 
 def load_tiles(path):

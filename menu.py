@@ -134,7 +134,9 @@ def pause_menu(input):
     global selected, menu_sel, menu_choice
     global pause_val
 
-    selected=change_selected(input, selected)
+    if input in ("Up", "Down"):
+        selected=change_selected(input, selected)
+        display.display_pause(selected, menu_choice[menu_sel])
     stop_pause=False
 
     if menu_sel==pause_val:
@@ -151,7 +153,6 @@ def pause_menu(input):
             if choice=="Quitter":
                 lvl.playing_loop=False
 
-    display.display_pause(selected, menu_choice[menu_sel])
 
     if stop_pause:
         quit_pause_menu()

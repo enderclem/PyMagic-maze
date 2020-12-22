@@ -219,12 +219,36 @@ def display_selected_game():
         # Calcul des position d'affichage
         x = 5 + (level_pos[0] + level_px[0] + 20) * (i%2)
         y = 180 + 250 * (i>=2)
-        
-        select=lvl.selected_pion[i]
-        pion_n=[lvl.pion_name[j+select-1-len(lvl.pion_name)*(j+select-1>=len(lvl.pion_name))] for j in range(4)]
 
-        display_selected_ingame(x, y, 1, pion_n, "select_p"+str(i))
-        display_selected_ingame(x+50, y, lvl.selected_act[i], lvl.players_act[i], "select_a"+str(i))
+        # Affichage de la selection de pion        
+        if len(lvl.pion_name)>4:
+            select=lvl.selected_pion[i]
+            pion_n=[lvl.pion_name[j+select-1-len(lvl.pion_name)*(j+select-1>=len(lvl.pion_name))] for j in range(4)]
+            display_selected_ingame(x, y, 
+                                    select_value=1, 
+                                    list_choice=pion_n, 
+                                    tag_name="select_p"+str(i))
+        else:
+            display_selected_ingame(x, y, 
+                                    select_value=lvl.selected_pion[i], 
+                                    list_choice=lvl.pion_name, 
+                                    tag_name="select_p"+str(i))
+
+        # Affichage de la selection d'action
+        if len(lvl.players_act[i])>4:
+            select=lvl.selected_act[i]
+            player_a=[lvl.players_act[i][j+select-1-len(lvl.players_act[i])*(j+select-1>=len(lvl.players_act[i]))] for j in range(4)]
+            display_selected_ingame(x+50, y, 
+                                    select_value=1, 
+                                    list_choice=player_a, 
+                                    tag_name="select_a"+str(i))
+        else:
+            display_selected_ingame(x+50, y, 
+                                    select_value=lvl.selected_act[i], 
+                                    list_choice=lvl.players_act[i], 
+                                    tag_name="select_a"+str(i))
+
+        # display_selected_ingame(x+50, y, lvl.selected_act[i], lvl.players_act[i], "select_a"+str(i)) POUBELLE
 
 
 def display_selected_ingame(x, y, select_value, list_choice, tag_name="default"):
@@ -259,7 +283,7 @@ def display_selected_vortex():
     utk.image(
         lvl.selected_vortex[0]//2 * 40 + 20 + level_pos[0],
         lvl.selected_vortex[1]//2 * 40 + 20 + level_pos[1],
-        "sprites/vortex_select.gif",
+        "sprites/select_ingame.gif",
         tag="vortex_select"
     )
 
@@ -282,12 +306,22 @@ def display_timer(x, y):
                   "sprites/hourglass.gif",
                   tag="timer")
 
-    utk.texte(x+50, y+110,str(int(timer.timer) // 60) + ":" + str(int(timer.timer % 60)),
-              couleur="black",
-              ancrage="center",
-              police="Purisa",
-              taille=28,
-              tag="timer")
+    if timer.timer>0:
+      utk.texte(x+50, y+110,
+                str(int(timer.timer) // 60) + ":" + str(int(timer.timer % 60)),
+                couleur="black",
+                ancrage="center",
+                police="Purisa",
+                taille=28,
+                tag="timer")
+    else:
+      utk.texte(x+50, y+110, 
+                "0:0",
+                couleur="black",
+                ancrage="center",
+                police="Purisa",
+                taille=28,
+                tag="timer")
 
 
 def display_timer_X(case):

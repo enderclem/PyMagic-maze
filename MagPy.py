@@ -198,10 +198,10 @@ def player_explore(p):
     case_pos=lvl.pion_pos[pion]
     case=lvl.level[case_pos[1]][case_pos[0]]
     case_mean=lvl.meanings[case]
+    info=lvl.explore_info(case_pos)
 
-    if case_mean=="explore "+pion_name:
-        if 1<case_pos[0]<len(lvl.level[0])-2 and 1<case_pos[1]<len(lvl.level)-2:
-            # Verifier aussi si ca ne sort pas du terrain
+    if case_mean=="explore "+pion_name and info is not None:
+        """    if 1<case_pos[0]<len(lvl.level[0])-2 and 1<case_pos[1]<len(lvl.level)-2:
             case_around={"x": {-1: lvl.meanings[lvl.level[case_pos[1]][case_pos[0]-2]],
                                1: lvl.meanings[lvl.level[case_pos[1]][case_pos[0]+2]]}, 
                         "y": {-1: lvl.meanings[lvl.level[case_pos[1]-2][case_pos[0]]],
@@ -222,8 +222,11 @@ def player_explore(p):
             if 0<=tile_pos_x<=len(lvl.level[0])-9 and 0<=tile_pos_y<=len(lvl.level)-9:
                 rotation=(case_around["x"][-1]=="unexplored")*3 \
                         +(case_around["x"][1] =="unexplored") \
-                        +(case_around["y"][1] =="unexplored")*2
-                lvl.add_tile(tile_pos_x, tile_pos_y, rotation)
+                        +(case_around["y"][1] =="unexplored")*2"""
+
+        tile_pos=info[0]
+        rotation=info[1]
+        lvl.add_tile(tile_pos[0], tile_pos[1], rotation)
 
         lvl.level[case_pos[1]][case_pos[0]]=" "
         display.display_all_level()
