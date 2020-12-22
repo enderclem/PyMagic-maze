@@ -23,7 +23,7 @@ selected_act = [0]
 nbr_guards=0
 
 # Sorts magiques
-spells_all=("balais", "echange", "teleport", "fantome", "grenouille", "invisibilite", "appat")
+spells_all=("spell_balai", "spell_echange", "spell_teleport", "spell_fantome", "spell_grenouille", "spell_invisibilite", "spell_appat")
 nbr_spells=2
 
 # Autres
@@ -243,7 +243,9 @@ def share_actions(nbr_of_player):
     global players_act
     global selected_pion
     global selected_act
+    global spells_all, nbr_spells
 
+    # distribution des actions pour chaque joueur
     to_distribute=list(actions)
     players_act=[[] for i in range(nbr_of_player)]
 
@@ -251,13 +253,22 @@ def share_actions(nbr_of_player):
         for i in range(nbr_of_player):
             random_act = to_distribute.pop(random.randint(0, len(to_distribute)-1))
             players_act[i].append(random_act)
-
+    
     bonus=[i for i in range(nbr_of_player)] # Numéro des joueurs pouvant avoir une des actions restantes
     
+    # distribution des actions en trop
     for act in to_distribute:
         p_gain=bonus.pop(random.randint(0, len(bonus)-1))
         players_act[p_gain].append(act)
 
+    # Distribution des sorts
+    to_distribute=list(spells_all)
+    for i in range(nbr_spells):
+        random_spell = to_distribute.pop(random.randint(0, len(to_distribute)-1))
+        for j in range(len(players_act)):
+            players_act[j].append(random_spell)
+
+    # Initialisation des sélecteurs d'actions/pions
     selected_pion=[0 for i in range(nbr_of_player)]
     selected_act=[0 for i in range(nbr_of_player)]
 
