@@ -67,7 +67,7 @@ x fixe timer (probleme du stop a 0:59)
 - télékinésie elfe
 --------------------
 sort magicienne (yen a plein) :
-- sort balai (ok)
+x sort balai (ok)
 - sort echange (ok)
 - sort teleportation (ok)
 - sort fantome (ok)

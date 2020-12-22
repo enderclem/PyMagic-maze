@@ -172,6 +172,10 @@ def player_act(p):
         player_escalator(p)
     elif action=="explore":
         player_explore(p)
+    elif "spell" in action:
+        player_spell(p, action)
+    else:
+        print("Cette action n'a pas d'effet assigné.")
     # Ajouter ici si l'action est un vortex, escalator...
 
 
@@ -201,35 +205,25 @@ def player_explore(p):
     info=lvl.explore_info(case_pos)
 
     if case_mean=="explore "+pion_name and info is not None:
-        """    if 1<case_pos[0]<len(lvl.level[0])-2 and 1<case_pos[1]<len(lvl.level)-2:
-            case_around={"x": {-1: lvl.meanings[lvl.level[case_pos[1]][case_pos[0]-2]],
-                               1: lvl.meanings[lvl.level[case_pos[1]][case_pos[0]+2]]}, 
-                        "y": {-1: lvl.meanings[lvl.level[case_pos[1]-2][case_pos[0]]],
-                               1: lvl.meanings[lvl.level[case_pos[1]+2][case_pos[0]]]}}
-
-            # Calcul de la position de la tuile à poser
-            tile_pos_x=case_pos[0] \
-                      +(case_around["x"][-1]=="unexplored")*-9 \
-                      +(case_around["x"][1] =="unexplored")*1 \
-                      +(case_around["y"][-1]=="unexplored")*-3 \
-                      +(case_around["y"][1] =="unexplored")*-5
-            tile_pos_y=case_pos[1] \
-                      +(case_around["x"][-1]=="unexplored")*-5 \
-                      +(case_around["x"][1] =="unexplored")*-3 \
-                      +(case_around["y"][-1]=="unexplored")*-9 \
-                      +(case_around["y"][1] =="unexplored")*1
-            # verifier si la tuile sort du terrain
-            if 0<=tile_pos_x<=len(lvl.level[0])-9 and 0<=tile_pos_y<=len(lvl.level)-9:
-                rotation=(case_around["x"][-1]=="unexplored")*3 \
-                        +(case_around["x"][1] =="unexplored") \
-                        +(case_around["y"][1] =="unexplored")*2"""
-
         tile_pos=info[0]
         rotation=info[1]
         lvl.add_tile(tile_pos[0], tile_pos[1], rotation)
 
         lvl.level[case_pos[1]][case_pos[0]]=" "
         display.display_all_level()
+
+
+def player_spell(p, spell):
+    spell=spell.replace("spell_", "")
+
+    if spell=="balai" and len(lvl.deactive_hourglass)!=0:
+        lvl.player_using_spell=p
+        lvl.spell_being_used=spell
+        lvl.selected_spell_target=lvl.deactive_hourglass[0]
+        display.display_selected_target(lvl.selected_spell_target)
+
+    else:
+        print("Le sort utilisé n'est pas assigné ou ne peut pas être utilisé maintenant.")
 
 
 def player_vortex(p):
@@ -242,7 +236,7 @@ def player_vortex(p):
     if case_mean=="vortex "+pion_name:
         lvl.player_using_vortex=p
         lvl.selected_vortex=lvl.pion_pos[lvl.selected_pion[p]]
-        display.display_selected_vortex()
+        display.display_selected_target(lvl.selected_vortex)
 
 
 def player_escalator(p):
@@ -269,6 +263,37 @@ def selection_change(touche, actual_selection):
     return actual_selection
 
 
+def spell_target_selection(input):
+    spell=lvl.spell_being_used
+    p=lvl.player_using_spell
+    control=lvl.controller[p]
+    target=lvl.selected_spell_target
+
+    if input in control.keys():
+        if "select" in control[input]:
+            select_delta=int(control[input].replace("select player ", "").replace("select action ", ""))
+
+            # Sélection pour le sort balai
+            if spell=="balai":
+                target_id=lvl.deactive_hourglass.index(target)
+                target_id+=select_delta
+                if target_id>=len(lvl.deactive_hourglass):
+                    target_id=0
+                lvl.selected_spell_target=lvl.deactive_hourglass[target_id]
+                display.display_selected_target(lvl.selected_spell_target)
+
+        elif control[input]=="do action":
+            if spell=="balai":
+                lvl.player_using_spell=-1
+                lvl.deactive_hourglass.remove(target)
+                print("effacage de :","X_"+str(target[0])+"_"+str(target[1]))
+                utk.efface("X_"+str(target[0])+"_"+str(target[1]))
+                display.efface_selected_target()
+                for p in range(len(lvl.players_act)):
+                    print("Nom du sort utilisé :", "spell_"+str(spell))
+                    lvl.players_act[p].remove("spell_"+str(spell))
+
+
 def vortex_selection(input):
     """
     Gère la sélection et l'utilisation du vortex.
@@ -293,7 +318,7 @@ def vortex_selection(input):
                 for x in range(x_start, x_end, select_delta*2):
                     if lvl.meanings[lvl.level[y][x]] == "vortex "+pion_name and check_guard(pion_name, (x, y)) and (x, y) not in pion_pos_others:
                         lvl.selected_vortex=(x, y)
-                        display.display_selected_vortex()
+                        display.display_selected_target(lvl.selected_vortex)
                         return None
 
                 x_start=(len(lvl.level[0])-1)*(select_delta==-1) + select_delta
@@ -302,6 +327,6 @@ def vortex_selection(input):
         elif control[input]=="do action":
             lvl.player_using_vortex=-1
             lvl.pion_pos[lvl.selected_pion[p]]=vort
-            display.efface_selected_vortex()
+            display.efface_selected_target()
             display.display_pion(lvl.selected_pion[p])
-            
+

@@ -22,17 +22,22 @@ selected_act = [0]
 # Gardes
 nbr_guards=0
 
+# Vortex
+player_using_vortex=-1
+selected_vortex=(1, 1)
+
 # Sorts magiques
 spells_all=("spell_balai", "spell_echange", "spell_teleportation", "spell_fantome", "spell_grenouille", "spell_invisibilite", "spell_appat")
 nbr_spells=2
+player_using_spell=-1
+spell_being_used=None
+selected_spell_target=None
 
 # Autres
 actions = ("go_left", "go_right", "go_up", "go_down", "vortex", "escalator", "explore") # Toutes les actions disponibles
 has_stolen=False
 deactive_hourglass=[]
 discussing=False
-player_using_vortex=-1
-selected_vortex=(1, 1)
 escalator={}
 
 # Matrice du niveau
@@ -264,7 +269,8 @@ def share_actions(nbr_of_player):
     # Distribution des sorts
     to_distribute=list(spells_all)
     for i in range(nbr_spells):
-        random_spell = to_distribute.pop(random.randint(0, len(to_distribute)-1))
+        # random_spell = to_distribute.pop(random.randint(0, len(to_distribute)-1))
+        random_spell="spell_balai"
         for j in range(len(players_act)):
             players_act[j].append(random_spell)
 

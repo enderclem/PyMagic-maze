@@ -30,7 +30,9 @@ def display_all_level():
         display_pion(i)
     display_selected_game()
     if lvl.player_using_vortex!=-1:
-        display_selected_vortex()
+        display_selected_target(lvl.selected_vortex)
+    if lvl.player_using_spell!=-1:
+        display_selected_target(lvl.selected_spell_target)
     display_escalators()
     if lvl.discussing:
         display_discuss(x=10, y=130)
@@ -103,7 +105,8 @@ def display_cases():
 
                 if (xx, yy) in lvl.deactive_hourglass:
                     utk.image(case_pos[0], case_pos[1],
-                              "sprites/X.gif")
+                              "sprites/X.gif",
+                              tag="X_"+str(xx)+"_"+str(yy))
 
             # Affichage des cases sabliers
             elif "vortex" in lvl.meanings[case]:
@@ -278,17 +281,17 @@ def display_selected_ingame(x, y, select_value, list_choice, tag_name="default")
             tag=tag_name)
 
 
-def display_selected_vortex():
-    efface_selected_vortex()
+def display_selected_target(pos_case):
+    efface_selected_target()
     utk.image(
-        lvl.selected_vortex[0]//2 * 40 + 20 + level_pos[0],
-        lvl.selected_vortex[1]//2 * 40 + 20 + level_pos[1],
+        pos_case[0]//2 * 40 + 20 + level_pos[0],
+        pos_case[1]//2 * 40 + 20 + level_pos[1],
         "sprites/select_ingame.gif",
-        tag="vortex_select"
+        tag="target_select"
     )
 
-def efface_selected_vortex():
-    utk.efface("vortex_select")
+def efface_selected_target():
+    utk.efface("target_select")
 
 
 def display_timer(x, y):
@@ -327,7 +330,8 @@ def display_timer(x, y):
 def display_timer_X(case):
     pos_case=(level_pos[0]+40*(case[0]//2)+20, level_pos[1]+40*(case[1]//2)+20)
     utk.image(pos_case[0], pos_case[1],
-              "sprites/X.gif")
+              "sprites/X.gif", 
+              tag="X_"+str(case[0])+"_"+str(case[1]))
 
 
 def display_vortex(case_pos, meaning_case):

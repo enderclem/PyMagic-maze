@@ -16,7 +16,7 @@ def main():
     global in_menu, playing
 
     debug_mode = False
-    all_input = ("a", "z", "q", "s", "w", "t", "g", "y", "h", "b")#, "a", "a", "a", "a", "a", "a", "a", "a", "a", "a")
+    all_input = ("a", "z", "q", "s", "w", "t", "g", "y", "h", "b")
 
     selection = 0
 
@@ -49,6 +49,8 @@ def main():
                     display.efface_discuss()
                 elif lvl.player_using_vortex!=-1:
                     vortex_selection(input)
+                elif lvl.player_using_spell!=-1:
+                    spell_target_selection(input)
                 elif menu.paused==True:
                     menu.pause_menu(input)
                 else:
@@ -85,7 +87,6 @@ def refresh_display():
         if menu.paused:
             display.init_pause()
             display.display_pause(menu.selected, menu.menu_choice[menu.menu_sel])
-
 
 
 if __name__ == '__main__':
