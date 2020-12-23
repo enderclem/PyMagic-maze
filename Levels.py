@@ -32,6 +32,7 @@ nbr_spells=2
 player_using_spell=-1
 spell_being_used=None
 selected_spell_target=None
+swap_pion=[]
 
 # Autres
 actions = ("go_left", "go_right", "go_up", "go_down", "vortex", "escalator", "explore") # Toutes les actions disponibles
@@ -238,6 +239,13 @@ def explore_info(case_pos):
                 return ((tile_pos_x, tile_pos_y), rotation)
 
     return None
+
+
+def get_index_pion_pos(pos):
+    global pion_pos, pion_name
+    for i in range(len(pion_pos)):
+        if pion_pos[i]==pos and "grenouille" not in pion_name[i]:
+            return i
 
 
 def share_actions(nbr_of_player):

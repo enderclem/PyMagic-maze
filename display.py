@@ -297,7 +297,7 @@ def display_selected_ingame(x, y, select_value, list_choice, tag_name="default")
 
 
 def display_selected_target(pos_case):
-    efface_selected_target()
+    utk.efface("target_select")
     utk.image(
         pos_case[0]//2 * 40 + 20 + level_pos[0],
         pos_case[1]//2 * 40 + 20 + level_pos[1],
@@ -305,8 +305,20 @@ def display_selected_target(pos_case):
         tag="target_select"
     )
 
+
+def display_selected_target_confirmed(pos_case):
+    utk.efface("target_select_confirmed")
+    utk.image(
+        pos_case[0]//2 * 40 + 20 + level_pos[0],
+        pos_case[1]//2 * 40 + 20 + level_pos[1],
+        "sprites/select_ingame_confirmed.gif",
+        tag="target_select_confirmed"
+    )    
+
+
 def efface_selected_target():
     utk.efface("target_select")
+    utk.efface("target_select_confirmed")
 
 
 def display_timer(x, y):

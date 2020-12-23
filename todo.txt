@@ -68,7 +68,7 @@ x fixe timer (probleme du stop a 0:59)
 --------------------
 sort magicienne (yen a plein) :
 x sort balai (ok)
-- sort echange (ok)
+x sort echange (ok)
 - sort teleportation (ok)
 - sort fantome (ok)
 x sort grenouille (ok)

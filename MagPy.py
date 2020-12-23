@@ -253,6 +253,11 @@ def player_spell(p, spell):
                 lvl.selected_spell_target=lvl.pion_pos[i]
                 break
         display.display_selected_target(lvl.selected_spell_target)
+    if spell=="echange":
+        lvl.player_using_spell=p
+        lvl.spell_being_used=spell
+        lvl.selected_spell_target=lvl.pion_pos[lvl.selected_pion[p]]
+        display.display_selected_target(lvl.selected_spell_target)
 
     else:
         print("Le sort utilisé n'est pas assigné ou ne peut pas être utilisé maintenant.")
@@ -307,6 +312,7 @@ def spell_target_selection(input):
     p=lvl.player_using_spell
     control=lvl.controller[p]
     target=lvl.selected_spell_target
+    target_id=None
 
     if input in control.keys():
         if "select" in control[input]:
@@ -335,6 +341,20 @@ def spell_target_selection(input):
                         break
                 display.display_selected_target(lvl.selected_spell_target)
 
+            # Sélection pour le sort echange
+            if spell=="echange":
+                target_id=lvl.get_index_pion_pos(target)
+                while True:
+                    target_id+=select_delta
+                    if target_id>=len(lvl.pion_name):
+                        target_id=0
+                    if target_id<0:
+                        target_id=len(lvl.pion_name)-1
+                    if "grenouille" not in lvl.pion_name[target_id] and target_id not in lvl.swap_pion:
+                        lvl.selected_spell_target=lvl.pion_pos[target_id]
+                        break
+                display.display_selected_target(lvl.selected_spell_target)
+
         elif control[input]=="do action":
             # Effet du sort balai
             if spell=="balai":
@@ -350,7 +370,6 @@ def spell_target_selection(input):
             if spell=="grenouille":
                 lvl.player_using_spell=-1
                 target_id=lvl.pion_pos.index(target)
-                # utk.efface("pion"+str(target_id))
                 lvl.pion_name[target_id] = "grenouille_" + lvl.pion_name[target_id].split("_")[1]
                 if lvl.selected_pion[p]==target_id:
                     lvl.selected_pion[p]+=1
@@ -359,6 +378,23 @@ def spell_target_selection(input):
                 for p in range(len(lvl.players_act)):
                     print("Nom du sort utilisé :", "spell_"+str(spell))
                     lvl.players_act[p].remove("spell_"+str(spell))
+
+            # Effet du sort echange
+            if spell=="echange":
+                target_id=lvl.get_index_pion_pos(target)
+                if len(lvl.swap_pion)==0:
+                    lvl.swap_pion.append(target_id)
+                    display.display_selected_target_confirmed(target)
+                else:
+                    lvl.player_using_spell=-1   
+                    lvl.swap_pion.append(target_id)
+                    lvl.pion_pos[lvl.swap_pion[0]], lvl.pion_pos[lvl.swap_pion[1]] = lvl.pion_pos[lvl.swap_pion[1]], lvl.pion_pos[lvl.swap_pion[0]]
+                    for pion in lvl.swap_pion:
+                        display.display_pion(pion)
+                    display.efface_selected_target()
+                    for p in range(len(lvl.players_act)):
+                        print("Nom du sort utilisé :", "spell_"+str(spell))
+                        lvl.players_act[p].remove("spell_"+str(spell))
 
 
 def vortex_selection(input):
