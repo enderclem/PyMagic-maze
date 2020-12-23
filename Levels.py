@@ -268,9 +268,12 @@ def share_actions(nbr_of_player):
 
     # Distribution des sorts
     to_distribute=list(spells_all)
-    for i in range(nbr_spells):
-        # random_spell = to_distribute.pop(random.randint(0, len(to_distribute)-1))
-        random_spell="spell_balai"
+    """for i in range(nbr_spells):
+        random_spell = to_distribute.pop(random.randint(0, len(to_distribute)-1))
+        random_spell="spell_echange"
+        for j in range(len(players_act)):
+            players_act[j].append(random_spell)"""
+    for random_spell in ("spell_grenouille", "spell_echange"):
         for j in range(len(players_act)):
             players_act[j].append(random_spell)
 
@@ -400,14 +403,12 @@ def load_new_level(width, height):
     level.append(["?" for i in range(width*2+1)])
 
     pos_tile=((width-1)//2*2-2, (height-1)//2*2-2)
-    print("pos_tile", pos_tile)
 
     # Positionement des pions
     pion_pos=[(pos_tile[0]+x*2+3, pos_tile[1]+y*2+3) for x in range(2) for y in range(2)]
 
     # Chargement de la tuile de départ
     start_tile=load_tiles("tiles/start.tile")[0]
-    print("start_tile", start_tile)
     for y in range(9):
         for x in range(9):
             level[pos_tile[1]+y][pos_tile[0]+x]=start_tile[y][x]
@@ -420,7 +421,7 @@ def load_new_level(width, height):
     level_add_escalators()
     share_actions(nbr_of_player)
 
-    print("DEBUT DE LA GAME")
+    print("DEBUT DE LA PARTIE")
 
 
 def load_tiles(path):

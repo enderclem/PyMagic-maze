@@ -65,18 +65,20 @@ def check_exit():
 
 def check_hourglass_case(pos):
     """
-    Vérifie si la case indiquée est un sablier
+    Vérifie si la case indiquée est un sablier^et active l'effet si c'est le cas.
     """
     mean=lvl.meanings[lvl.level[pos[1]][pos[0]]]
 
     if mean=="flip hourglass" and pos not in lvl.deactive_hourglass:
         lvl.discussing=True
+        spell_end_effects()
         lvl.deactive_hourglass.append(pos)
         timer.flip_timer()
         display.display_timer_X(case=pos)
         for i in range(4):
             display.display_pion(i)
         display.display_discuss(x=10, y=130)
+
 
 
 def check_steal(input=None):
@@ -141,11 +143,15 @@ def player_choose(input):
 
             if "select player" in mean:
                 selection_delta=int(mean.replace("select player ", ""))
-                lvl.selected_pion[p]+=selection_delta
-                if lvl.selected_pion[p]>=len(lvl.pion_name):
-                    lvl.selected_pion[p]=0
-                elif lvl.selected_pion[p]<0:
-                    lvl.selected_pion[p]=len(lvl.pion_name)-1
+                good=False
+                while not good:
+                    lvl.selected_pion[p]+=selection_delta
+                    if lvl.selected_pion[p]>=len(lvl.pion_name):
+                        lvl.selected_pion[p]=0
+                    elif lvl.selected_pion[p]<0:
+                        lvl.selected_pion[p]=len(lvl.pion_name)-1
+                    if "grenouille" not in lvl.pion_name[lvl.selected_pion[p]]:
+                        good=True
 
             elif "select action" in mean:
                 selection_delta=int(mean.replace("select action ", ""))
@@ -221,6 +227,14 @@ def player_spell(p, spell):
         lvl.spell_being_used=spell
         lvl.selected_spell_target=lvl.deactive_hourglass[0]
         display.display_selected_target(lvl.selected_spell_target)
+    if spell=="grenouille" and any(filter(lambda name: "garde" in name, lvl.pion_name)): # Vérifie si un garde existe
+        lvl.player_using_spell=p
+        lvl.spell_being_used=spell
+        for i in range(len(lvl.pion_name)):
+            if "garde" in lvl.pion_name[i]:
+                lvl.selected_spell_target=lvl.pion_pos[i]
+                break
+        display.display_selected_target(lvl.selected_spell_target)
 
     else:
         print("Le sort utilisé n'est pas assigné ou ne peut pas être utilisé maintenant.")
@@ -259,10 +273,17 @@ def selection_change(touche, actual_selection):
         if actual_selection > 3:
             actual_selection = 0
 
-    # display.display_selected_pion(5, 140, actual_selection)
     return actual_selection
 
 
+def spell_end_effects():
+    """Met fin aux effets temporaires des sorts."""
+    for i in range(len(lvl.pion_name)):
+        if "grenouille" in lvl.pion_name[i]:
+            lvl.pion_name[i] = "garde_" + lvl.pion_name[i].split("_")[1]
+            display.display_pion(i)
+
+    
 def spell_target_selection(input):
     spell=lvl.spell_being_used
     p=lvl.player_using_spell
@@ -282,12 +303,38 @@ def spell_target_selection(input):
                 lvl.selected_spell_target=lvl.deactive_hourglass[target_id]
                 display.display_selected_target(lvl.selected_spell_target)
 
+            # Sélection durant le sort grenouille
+            if spell=="grenouille":
+                target_id=lvl.pion_pos.index(target)
+                while True:
+                    target_id+=select_delta
+                    if target_id>=len(lvl.pion_name):
+                        target_id=0
+                    if target_id<0:
+                        target_id=len(lvl.pion_name)-1
+                    if "garde" in lvl.pion_name[target_id]:
+                        lvl.selected_spell_target=lvl.pion_pos[target_id]
+                        break
+                display.display_selected_target(lvl.selected_spell_target)
+
         elif control[input]=="do action":
+            # Effet du sort balai
             if spell=="balai":
                 lvl.player_using_spell=-1
                 lvl.deactive_hourglass.remove(target)
-                print("effacage de :","X_"+str(target[0])+"_"+str(target[1]))
                 utk.efface("X_"+str(target[0])+"_"+str(target[1]))
+                display.efface_selected_target()
+                for p in range(len(lvl.players_act)):
+                    print("Nom du sort utilisé :", "spell_"+str(spell))
+                    lvl.players_act[p].remove("spell_"+str(spell))
+
+            # Effet du sort grenouille
+            if spell=="grenouille":
+                lvl.player_using_spell=-1
+                target_id=lvl.pion_pos.index(target)
+                # utk.efface("pion"+str(target_id))
+                lvl.pion_name[target_id] = "grenouille_" + lvl.pion_name[target_id].split("_")[1]
+                display.display_pion(target_id)
                 display.efface_selected_target()
                 for p in range(len(lvl.players_act)):
                     print("Nom du sort utilisé :", "spell_"+str(spell))

@@ -193,8 +193,12 @@ def display_frame():
 
 
 def display_lose():
-    utk.texte(win_size[0]/2, win_size[1]/2, "Vous avez perdu...",
-              ancrage="center")
+    utk.texte(win_size[0]/2, win_size[1]/2, 
+              "Vous avez perdu...",
+              couleur="red",
+              ancrage="center",
+              police="Purisa",
+              taille=56)
 
     utk.mise_a_jour()
 
@@ -205,11 +209,13 @@ def display_pion(p):
     :param int p: numéro du pion
     """
     utk.efface("pion"+str(p))
-
+    name=lvl.pion_name[p]
+    if "grenouille" in name:
+        name="grenouille"
     utk.image(
         lvl.pion_pos[p][0]//2 * 40 + 20 + level_pos[0],
         lvl.pion_pos[p][1]//2 * 40 + 20 + level_pos[1],
-        "sprites/" + lvl.pion_name[p] + ".gif",
+        "sprites/" + name + ".gif",
         tag="pion"+str(p)
     )
 
@@ -223,21 +229,30 @@ def display_selected_game():
         x = 5 + (level_pos[0] + level_px[0] + 20) * (i%2)
         y = 180 + 250 * (i>=2)
 
-        # Affichage de la selection de pion        
-        if len(lvl.pion_name)>4:
-            select=lvl.selected_pion[i]
-            pion_n=[lvl.pion_name[j+select-1-len(lvl.pion_name)*(j+select-1>=len(lvl.pion_name))] for j in range(4)]
+        # Affichage de la selection de pion
+        pion_names = list(lvl.pion_name)
+        select = lvl.selected_pion[i]
+        for j in range(len(pion_names)):
+            if "grenouille" in pion_names[j]:
+                pion_names.pop(j)
+                if select>j:
+                    select-=1
+                break
+        if len(pion_names)>4:
+            pion_n=[pion_names[j+select-1-len(pion_names)*(j+select-1>=len(pion_names))] for j in range(4)]
             display_selected_ingame(x, y, 
                                     select_value=1, 
                                     list_choice=pion_n, 
                                     tag_name="select_p"+str(i))
         else:
             display_selected_ingame(x, y, 
-                                    select_value=lvl.selected_pion[i], 
-                                    list_choice=lvl.pion_name, 
+                                    select_value=select, 
+                                    list_choice=pion_names, 
                                     tag_name="select_p"+str(i))
 
         # Affichage de la selection d'action
+        #print("lvl.players_act", lvl.players_act)
+        #print("lvl.nbr_of_player", lvl.nbr_of_player, i)
         if len(lvl.players_act[i])>4:
             select=lvl.selected_act[i]
             player_a=[lvl.players_act[i][j+select-1-len(lvl.players_act[i])*(j+select-1>=len(lvl.players_act[i]))] for j in range(4)]
@@ -348,7 +363,10 @@ def display_win():
     Affiche 'Vous avez gagné !'
     """
     utk.texte(win_size[0]/2, win_size[1]/2, "Vous avez gagné !",
-              ancrage="center")
+              couleur="lime",
+              ancrage="center",
+              police="Purisa",
+              taille=56)
     utk.mise_a_jour()
 
 
