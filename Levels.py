@@ -33,6 +33,7 @@ player_using_spell=-1
 spell_being_used=None
 selected_spell_target=None
 move_pion=[]
+eating=None
 
 # Autres
 actions = ("go_left", "go_right", "go_up", "go_down", "vortex", "escalator", "explore") # Toutes les actions disponibles
@@ -43,29 +44,7 @@ escalator={}
 reason_stop="quit"
 
 # Matrice du niveau
-level = [
-    "...............................",
-    ".#.#. . . . .#.#.#.#. . .H.#.#.",
-    ".........§.....................",
-    ".#.(.0.#. . .#.e. .#. . . .).#.",
-    "...............................",
-    ".#.#.#. . .#.#. .#.e. . . .#.#.",
-    "...............................",
-    ". . . . .#.#.$.€.#.#. . . .#.°.",
-    "...§.§.§.......................",
-    ". § . § . .0._._.°.#. . . .#. .",
-    "...............................",
-    ". § § § .#.o._._.O.e. . .#. . .",
-    "...............................",
-    ". § § § .#.#.£.@.#.#. . .#. .#.",
-    "...............................",
-    ". . § . § .#. .#.#. . . . . .#.",
-    "...§.§.§.......................",
-    ".#.]. . . .#. . . . . . . .[.#.",
-    "...............................",
-    ".#.#.H. . . . . . . . . . .#.#.",
-    "..............................."
-]
+level = []
 tiles_left = []
 tiles_pos = dict()
 tiles_nbr = 0
@@ -100,6 +79,7 @@ meanings = {
     "G": "guard",
     "R": "reinforcement unactivated",
     "r": "reinforcement activated",
+    "T": "McTrollald",
 }
 
 meanings_reverse={meanings[m]: m for m in meanings.keys()}
@@ -282,7 +262,7 @@ def share_actions(nbr_of_player):
         random_spell="spell_echange"
         for j in range(len(players_act)):
             players_act[j].append(random_spell)"""
-    for random_spell in ("spell_grenouille", "spell_teleportation"):
+    for random_spell in ("spell_appat", "spell_invisibilite"):
         for j in range(len(players_act)):
             players_act[j].append(random_spell)
 

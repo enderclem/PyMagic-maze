@@ -33,6 +33,8 @@ def display_all_level():
         display_selected_target(lvl.selected_vortex)
     if lvl.player_using_spell!=-1:
         display_selected_target(lvl.selected_spell_target)
+        if len(lvl.move_pion)>0:
+            display_selected_target_confirmed(lvl.pion_pos[lvl.move_pion[0]])
     display_escalators()
     if lvl.discussing:
         display_discuss(x=10, y=130)
@@ -121,10 +123,15 @@ def display_cases():
                 utk.image(case_pos[0], case_pos[1],
                           "sprites/magn_glass_" + lvl.meanings[case].replace("explore ", "") + ".gif")
 
-            # Affichage des cases sabliers
+            # Affichage des cases renfort
             elif lvl.meanings[case] == "reinforcement unactivated":
                 utk.image(case_pos[0], case_pos[1],
                           "sprites/reinforcement.gif")
+
+            # Affichage des cases McTrollald
+            elif lvl.meanings[case] == "McTrollald":
+                utk.image(case_pos[0], case_pos[1],
+                          "sprites/trollald.gif")
 
 
     # Deuxième boucle identique à la première pour que les murs
@@ -218,6 +225,13 @@ def display_pion(p):
         "sprites/" + name + ".gif",
         tag="pion"+str(p)
     )
+    if name==lvl.eating:
+        utk.image(
+            lvl.pion_pos[p][0]//2 * 40 + 20 + level_pos[0],
+            lvl.pion_pos[p][1]//2 * 40 + 20 + level_pos[1],
+            "sprites/eating.gif",
+            tag="pion"+str(p)
+        )
 
 
 def display_selected_game():
@@ -540,5 +554,3 @@ def display_menu_selection(selected):
                   remplissage="grey",
                   epaisseur=1,
                   tag="selection")
-
-

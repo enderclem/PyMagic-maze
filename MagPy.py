@@ -45,10 +45,28 @@ def check_guard(name, new_pos):
 
     for pion in range(len(lvl.pion_pos)):
         if lvl.pion_name[pion] in enemies \
+        and lvl.pion_name[pion]!=lvl.eating \
         and lvl.tiles_pos[new_pos]==lvl.tiles_pos[lvl.pion_pos[pion]]:
             return False
 
     return True
+
+
+def check_guard_catch():
+    guard_tile=[]
+    thief_tile=[]
+    for pion in range(len(lvl.pion_name)):
+        if "garde" in lvl.pion_name[pion] and lvl.pion_name[pion]!=lvl.eating:
+            guard_tile.append(lvl.tiles_pos[lvl.pion_pos[pion]])
+        elif lvl.pion_name[pion] in ("magicienne", "elfe", "nain", "barbare"):
+            thief_tile.append(lvl.tiles_pos[lvl.pion_pos[pion]])
+
+    for gt in guard_tile:
+        if gt in thief_tile:
+            lvl.reason_stop="lose"
+            return True
+
+    return False
 
 
 def check_exit():
@@ -64,23 +82,6 @@ def check_exit():
 
         lvl.reason_stop = "win"
         return True
-
-
-def check_guard_catch():
-    guard_tile=[]
-    thief_tile=[]
-    for pion in range(len(lvl.pion_name)):
-        if "garde" in lvl.pion_name[pion]:
-            guard_tile.append(lvl.tiles_pos[lvl.pion_pos[pion]])
-        elif lvl.pion_name[pion] in ("magicienne", "elfe", "nain", "barbare"):
-            thief_tile.append(lvl.tiles_pos[lvl.pion_pos[pion]])
-
-    for gt in guard_tile:
-        if gt in thief_tile:
-            lvl.reason_stop="lose"
-            return True
-
-    return False
 
 
 def check_hourglass_case(pos):
@@ -245,7 +246,8 @@ def player_spell(p, spell):
         lvl.spell_being_used=spell
         lvl.selected_spell_target=lvl.deactive_hourglass[0]
         display.display_selected_target(lvl.selected_spell_target)
-    if spell=="grenouille" and any(filter(lambda name: "garde" in name, lvl.pion_name)): # Vérifie si un garde existe
+    if spell=="grenouille" \
+    and any(filter(lambda name: "garde" in name, lvl.pion_name)): # Vérifie si un garde existe
         lvl.player_using_spell=p
         lvl.spell_being_used=spell
         for i in range(len(lvl.pion_name)):
@@ -253,15 +255,19 @@ def player_spell(p, spell):
                 lvl.selected_spell_target=lvl.pion_pos[i]
                 break
         display.display_selected_target(lvl.selected_spell_target)
-    if spell=="echange":
+    if spell in ("echange", "teleportation"):
         lvl.player_using_spell=p
         lvl.spell_being_used=spell
         lvl.selected_spell_target=lvl.pion_pos[lvl.selected_pion[p]]
         display.display_selected_target(lvl.selected_spell_target)
-    if spell=="teleportation":
+    if spell=="appat"\
+    and any(filter(lambda name: "garde" in name, lvl.pion_name)) \
+    and any(filter(lambda line: lvl.meanings_reverse["McTrollald"] in line, lvl.level)):
         lvl.player_using_spell=p
         lvl.spell_being_used=spell
-        lvl.selected_spell_target=lvl.pion_pos[lvl.selected_pion[p]]
+        for i in range(len(lvl.pion_name)):
+            if "garde" in lvl.pion_name[i]:
+                lvl.selected_spell_target=lvl.pion_pos[i]
         display.display_selected_target(lvl.selected_spell_target)
 
     else:
@@ -307,9 +313,15 @@ def selection_change(touche, actual_selection):
 def spell_end_effects():
     """Met fin aux effets temporaires des sorts."""
     for i in range(len(lvl.pion_name)):
+        # Fin de l'effet grenouille
         if "grenouille" in lvl.pion_name[i]:
             lvl.pion_name[i] = "garde_" + lvl.pion_name[i].split("_")[1]
             display.display_pion(i)
+        # Fin de l'effet McTrollald
+        if lvl.eating is not None:
+            pion=lvl.pion_name.index(lvl.eating)
+            lvl.eating=None
+            display.display_pion(pion)
 
 
 def spell_end_use():
@@ -385,6 +397,33 @@ def spell_target_selection(input):
                         break
                 display.display_selected_target(lvl.selected_spell_target)
 
+            # Sélection durant le sort grenouille
+            if spell=="appat":
+                target_id=lvl.get_index_pion_pos(target)
+                if len(lvl.move_pion)==0:
+                    while True:
+                        target_id+=select_delta
+                        if target_id>=len(lvl.pion_name):
+                            target_id=0
+                        if target_id<0:
+                            target_id=len(lvl.pion_name)-1
+                        if "garde" in lvl.pion_name[target_id]:
+                            lvl.selected_spell_target=lvl.pion_pos[target_id]
+                            break
+                    display.display_selected_target(lvl.selected_spell_target)
+                else:
+                    y_start=target[1]
+                    y_end=len(lvl.level)*(select_delta==1) - (select_delta==-1)
+                    x_start=target[0]+select_delta*2
+                    x_end=len(lvl.level[0])*(select_delta==1) - (select_delta==-1)
+                    for y in range(y_start, y_end, select_delta*2):
+                        for x in range(x_start, x_end, select_delta*2):
+                            if lvl.meanings[lvl.level[y][x]] == "McTrollald":
+                                lvl.selected_spell_target=(x, y)
+                                display.display_selected_target(lvl.selected_spell_target)
+                                return None
+                        x_start=(len(lvl.level[0])-1)*(select_delta==-1) + select_delta
+
 
         elif control[input]=="do action":
             # Effet du sort balai
@@ -425,8 +464,26 @@ def spell_target_selection(input):
                 elif check_collision(target, target) and check_guard(lvl.pion_name[lvl.move_pion[0]], target):
                     lvl.pion_pos[lvl.move_pion[0]]=target
                     display.display_pion(lvl.move_pion[0])
-                    display.efface_selected_target()
                     spell_end_use()
+
+            # Effet du sort appat
+            if spell=="appat":
+                if len(lvl.move_pion)==0:
+                    target_id=lvl.get_index_pion_pos(target)
+                    lvl.move_pion.append(target_id)
+                    display.display_selected_target_confirmed(target)
+                    for y in range(len(lvl.level)):
+                        for x in range(len(lvl.level[y])):
+                            if lvl.meanings[lvl.level[y][x]]=="McTrollald":
+                                lvl.selected_spell_target=(x, y)
+                                display.display_selected_target(lvl.selected_spell_target)
+                                return None
+                else:
+                    lvl.pion_pos[lvl.move_pion[0]]=target
+                    lvl.eating=lvl.pion_name[lvl.move_pion[0]]
+                    display.display_pion(lvl.move_pion[0])
+                    spell_end_use()
+
 
     elif input in ("Up", "Down", "Left", "Right") and spell=="teleportation":
         vec_move_x = (input == "Right")*2 - (input == "Left")*2

@@ -28,3 +28,4 @@ s : explore nain,
 G : guard,
 R : reinforcement unactivated,
 r : reinforcement activated,
+T : McTrollald
