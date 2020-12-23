@@ -258,6 +258,11 @@ def player_spell(p, spell):
         lvl.spell_being_used=spell
         lvl.selected_spell_target=lvl.pion_pos[lvl.selected_pion[p]]
         display.display_selected_target(lvl.selected_spell_target)
+    if spell=="teleportation":
+        lvl.player_using_spell=p
+        lvl.spell_being_used=spell
+        lvl.selected_spell_target=lvl.pion_pos[lvl.selected_pion[p]]
+        display.display_selected_target(lvl.selected_spell_target)
 
     else:
         print("Le sort utilisé n'est pas assigné ou ne peut pas être utilisé maintenant.")
@@ -306,7 +311,18 @@ def spell_end_effects():
             lvl.pion_name[i] = "garde_" + lvl.pion_name[i].split("_")[1]
             display.display_pion(i)
 
-    
+
+def spell_end_use():
+    lvl.player_using_spell=-1
+    lvl.move_pion=[]
+    display.efface_selected_target()
+    print("Nom du sort utilisé :", "spell_"+str(lvl.spell_being_used))
+    for player in range(len(lvl.players_act)):
+        lvl.players_act[player].remove("spell_"+str(lvl.spell_being_used))
+        if lvl.selected_act[player]==len(lvl.players_act[player]):
+            lvl.selected_act[player]=0
+
+
 def spell_target_selection(input):
     spell=lvl.spell_being_used
     p=lvl.player_using_spell
@@ -350,51 +366,76 @@ def spell_target_selection(input):
                         target_id=0
                     if target_id<0:
                         target_id=len(lvl.pion_name)-1
-                    if "grenouille" not in lvl.pion_name[target_id] and target_id not in lvl.swap_pion:
+                    if "grenouille" not in lvl.pion_name[target_id] and target_id not in lvl.move_pion:
                         lvl.selected_spell_target=lvl.pion_pos[target_id]
                         break
                 display.display_selected_target(lvl.selected_spell_target)
 
+            # Sélection pour le sort teleportation
+            if spell=="teleportation" and len(lvl.move_pion)==0:
+                target_id=lvl.get_index_pion_pos(target)
+                while True:
+                    target_id+=select_delta
+                    if target_id>=len(lvl.pion_name):
+                        target_id=0
+                    if target_id<0:
+                        target_id=len(lvl.pion_name)-1
+                    if "grenouille" not in lvl.pion_name[target_id] and target_id not in lvl.move_pion:
+                        lvl.selected_spell_target=lvl.pion_pos[target_id]
+                        break
+                display.display_selected_target(lvl.selected_spell_target)
+
+
         elif control[input]=="do action":
             # Effet du sort balai
             if spell=="balai":
-                lvl.player_using_spell=-1
                 lvl.deactive_hourglass.remove(target)
                 utk.efface("X_"+str(target[0])+"_"+str(target[1]))
                 display.efface_selected_target()
-                for p in range(len(lvl.players_act)):
-                    print("Nom du sort utilisé :", "spell_"+str(spell))
-                    lvl.players_act[p].remove("spell_"+str(spell))
+                spell_end_use()
 
             # Effet du sort grenouille
             if spell=="grenouille":
-                lvl.player_using_spell=-1
                 target_id=lvl.pion_pos.index(target)
                 lvl.pion_name[target_id] = "grenouille_" + lvl.pion_name[target_id].split("_")[1]
                 if lvl.selected_pion[p]==target_id:
                     lvl.selected_pion[p]+=1
                 display.display_pion(target_id)
-                display.efface_selected_target()
-                for p in range(len(lvl.players_act)):
-                    print("Nom du sort utilisé :", "spell_"+str(spell))
-                    lvl.players_act[p].remove("spell_"+str(spell))
+                spell_end_use()
 
             # Effet du sort echange
             if spell=="echange":
                 target_id=lvl.get_index_pion_pos(target)
-                if len(lvl.swap_pion)==0:
-                    lvl.swap_pion.append(target_id)
+                if len(lvl.move_pion)==0:
+                    lvl.move_pion.append(target_id)
                     display.display_selected_target_confirmed(target)
-                else:
-                    lvl.player_using_spell=-1   
-                    lvl.swap_pion.append(target_id)
-                    lvl.pion_pos[lvl.swap_pion[0]], lvl.pion_pos[lvl.swap_pion[1]] = lvl.pion_pos[lvl.swap_pion[1]], lvl.pion_pos[lvl.swap_pion[0]]
-                    for pion in lvl.swap_pion:
+                else: 
+                    lvl.move_pion.append(target_id)
+                    lvl.pion_pos[lvl.move_pion[0]], lvl.pion_pos[lvl.move_pion[1]] = lvl.pion_pos[lvl.move_pion[1]], lvl.pion_pos[lvl.move_pion[0]]
+                    for pion in lvl.move_pion:
                         display.display_pion(pion)
+                    spell_end_use()
+
+            # Effet du sort teleportation
+            if spell=="teleportation":
+                target_id=lvl.get_index_pion_pos(target)
+                if len(lvl.move_pion)==0:
+                    lvl.move_pion.append(target_id)
+                    display.display_selected_target_confirmed(target)
+                elif check_collision(target, target) and check_guard(lvl.pion_name[lvl.move_pion[0]], target):
+                    lvl.pion_pos[lvl.move_pion[0]]=target
+                    display.display_pion(lvl.move_pion[0])
                     display.efface_selected_target()
-                    for p in range(len(lvl.players_act)):
-                        print("Nom du sort utilisé :", "spell_"+str(spell))
-                        lvl.players_act[p].remove("spell_"+str(spell))
+                    spell_end_use()
+
+    elif input in ("Up", "Down", "Left", "Right") and spell=="teleportation":
+        vec_move_x = (input == "Right")*2 - (input == "Left")*2
+        vec_move_y = (input == "Down")*2 - (input == "Up")*2
+        new_pos = (target[0] + vec_move_x, target[1] + vec_move_y)
+
+        if 0<=new_pos[1]<len(lvl.level) and 0<=new_pos[0]<len(lvl.level[0]):
+            lvl.selected_spell_target=new_pos
+            display.display_selected_target(lvl.selected_spell_target)
 
 
 def vortex_selection(input):
