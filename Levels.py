@@ -39,6 +39,7 @@ has_stolen=False
 deactive_hourglass=[]
 discussing=False
 escalator={}
+reason_stop="quit"
 
 # Matrice du niveau
 level = [

@@ -7,7 +7,6 @@ import time
 import timer
 
 has_stolen = False
-reason_stop = "quit"  # Contient une variable pour décider de quoi faire après la fin de la boucle principale
 
 
 def check_collision(last_pos, new_pos):
@@ -15,16 +14,22 @@ def check_collision(last_pos, new_pos):
     Renvoie True si le personnage peut aller à la nouvelle position indiquée.
     """
 
-    if -1 < new_pos[1] < len(lvl.level) and -1 < new_pos[0] < len(lvl.level[0]): # Vérifie leslimites du terrain
+    if -1 < new_pos[1] < len(lvl.level) and -1 < new_pos[0] < len(lvl.level[0]): # Vérifie les limites du terrain
 
         direction=((new_pos[0]-last_pos[0])//2, (new_pos[1]-last_pos[1])//2)
         # Pour après vérifier si la nouvelle position se trouve dans un mur
         case_target=lvl.meanings[lvl.level[new_pos[1]][new_pos[0]]]
         # Pour vérifier si on essaie de passer par un mur
         trajectory_target=lvl.meanings[lvl.level[last_pos[1]+direction[1]][last_pos[0]+direction[0]]]
+        # Pour vérifier si la case n'est pris par aucun pion, excepté la grenouille
+        real_pion_pos=list(lvl.pion_pos)
+        for i in range(len(real_pion_pos)):
+            if "grenouille" in lvl.pion_name[i]:
+                real_pion_pos.pop(i)
+                break
 
         if case_target not in ("wall", "unexplored") \
-        and new_pos not in lvl.pion_pos \
+        and new_pos not in real_pion_pos \
         and trajectory_target != "wall":
             return True
 
@@ -51,16 +56,31 @@ def check_exit():
     Retourne True si tous les joueurs ont atteint la sortie.
     :return bool:
     """
-    global reason_stop
-
     if lvl.has_stolen:
         for i in range(len(lvl.pion_pos)):
             case = lvl.level[lvl.pion_pos[i][1]][lvl.pion_pos[i][0]]
             if lvl.meanings[case] != "exit " + lvl.pion_name[i]:
                 return False
 
-        reason_stop = "win"
+        lvl.reason_stop = "win"
         return True
+
+
+def check_guard_catch():
+    guard_tile=[]
+    thief_tile=[]
+    for pion in range(len(lvl.pion_name)):
+        if "garde" in lvl.pion_name[pion]:
+            guard_tile.append(lvl.tiles_pos[lvl.pion_pos[pion]])
+        elif lvl.pion_name[pion] in ("magicienne", "elfe", "nain", "barbare"):
+            thief_tile.append(lvl.tiles_pos[lvl.pion_pos[pion]])
+
+    for gt in guard_tile:
+        if gt in thief_tile:
+            lvl.reason_stop="lose"
+            return True
+
+    return False
 
 
 def check_hourglass_case(pos):
@@ -77,7 +97,8 @@ def check_hourglass_case(pos):
         display.display_timer_X(case=pos)
         for i in range(4):
             display.display_pion(i)
-        display.display_discuss(x=10, y=130)
+        if not check_guard_catch():
+            display.display_discuss(x=10, y=130)
 
 
 
@@ -104,10 +125,9 @@ def check_steal(input=None):
     display.display_all_level()
 
 def check_timer():
-    global reason_stop
 
     if timer.timer<=0:
-        reason_stop="lose"
+        lvl.reason_stop="lose"
         return True
 
     return False
@@ -117,15 +137,13 @@ def end_game():
     """
     Définit ce qui doit être affiché après avoir quitter le jeu. 
     """
-    global reason_stop
-
-    if reason_stop == "quit":
+    if lvl.reason_stop == "quit":
         return None
 
-    if reason_stop == "win":
+    if lvl.reason_stop == "win":
         display.display_win()
 
-    if reason_stop == "lose":
+    if lvl.reason_stop == "lose":
         display.display_lose()
 
     time.sleep(1)
@@ -334,6 +352,8 @@ def spell_target_selection(input):
                 target_id=lvl.pion_pos.index(target)
                 # utk.efface("pion"+str(target_id))
                 lvl.pion_name[target_id] = "grenouille_" + lvl.pion_name[target_id].split("_")[1]
+                if lvl.selected_pion[p]==target_id:
+                    lvl.selected_pion[p]+=1
                 display.display_pion(target_id)
                 display.efface_selected_target()
                 for p in range(len(lvl.players_act)):

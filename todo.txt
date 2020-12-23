@@ -71,10 +71,7 @@ x sort balai (ok)
 - sort echange (ok)
 - sort teleportation (ok)
 - sort fantome (ok)
-- sort grenouille (ok)
-  - defaite apres retransformation
-  - changement de selection apres transformation si le pion transformé est selectionné
-  - suppression de sa collision
+x sort grenouille (ok)
 - sort invisibilité (ok)
 - McTroollald's (ok)
 - sort boule de cristal (non)

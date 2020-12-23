@@ -67,7 +67,7 @@ def main():
         display.display_frame()
         utk.mise_a_jour()
 
-        if check_exit() or check_timer() \
+        if check_exit() or check_timer() or (lvl.playing_loop and check_guard_catch()) \
         or input == "F4" or (not lvl.menu_loop and not lvl.playing_loop):
             break
 
