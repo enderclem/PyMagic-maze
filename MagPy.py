@@ -9,9 +9,10 @@ import timer
 has_stolen = False
 
 
-def check_collision(last_pos, new_pos):
+def check_collision(last_pos, new_pos, name=None):
     """
-    Renvoie True si le personnage peut aller à la nouvelle position indiquée.
+    Renvoie True si le personnage peut aller à la nouvelle position indiquée, 
+    en prenant en compte les collisions.
     """
 
     if -1 < new_pos[1] < len(lvl.level) and -1 < new_pos[0] < len(lvl.level[0]): # Vérifie les limites du terrain
@@ -30,16 +31,25 @@ def check_collision(last_pos, new_pos):
 
         if case_target not in ("wall", "unexplored") \
         and new_pos not in real_pion_pos \
-        and trajectory_target != "wall":
+        and (trajectory_target != "wall" or (name=="magicienne" and lvl.ghost_mod)):
             return True
 
     return False    
 
 
 def check_guard(name, new_pos):
+    """
+    Renvoie True si le pion peut aller à la nouvelle position,
+    en prenant en compte les tuiles surveillées par les gardes.
+    """
     enemies=None
-    if "garde" in name:
-        enemies=("magicienne", "elfe", "nain", "barbare")
+    if name=="magicienne" and lvl.invisible:
+        return True
+    elif "garde" in name:
+        if lvl.invisible:
+            enemies=("elfe", "nain", "barbare")
+        else:
+            enemies=("magicienne", "elfe", "nain", "barbare")
     else:
         enemies=tuple(["garde_"+str(i) for i in range(lvl.nbr_guards)])
 
@@ -58,7 +68,7 @@ def check_guard_catch():
     for pion in range(len(lvl.pion_name)):
         if "garde" in lvl.pion_name[pion] and lvl.pion_name[pion]!=lvl.eating:
             guard_tile.append(lvl.tiles_pos[lvl.pion_pos[pion]])
-        elif lvl.pion_name[pion] in ("magicienne", "elfe", "nain", "barbare"):
+        elif lvl.pion_name[pion] in ("magicienne"*(not lvl.invisible), "elfe", "nain", "barbare"):
             thief_tile.append(lvl.tiles_pos[lvl.pion_pos[pion]])
 
     for gt in guard_tile:
@@ -214,7 +224,7 @@ def player_move(direction, pion):
     vec_move_y = (direction == "down")*2 - (direction == "up")*2
     new_pos = (pion_pos[0] + vec_move_x, pion_pos[1] + vec_move_y)
 
-    if check_collision(pion_pos, new_pos) and check_guard(lvl.pion_name[pion], new_pos):
+    if check_collision(pion_pos, new_pos, lvl.pion_name[pion]) and check_guard(lvl.pion_name[pion], new_pos):
         lvl.pion_pos[pion] = new_pos
         display.display_pion(pion)
 
@@ -246,7 +256,7 @@ def player_spell(p, spell):
         lvl.spell_being_used=spell
         lvl.selected_spell_target=lvl.deactive_hourglass[0]
         display.display_selected_target(lvl.selected_spell_target)
-    if spell=="grenouille" \
+    elif spell=="grenouille" \
     and any(filter(lambda name: "garde" in name, lvl.pion_name)): # Vérifie si un garde existe
         lvl.player_using_spell=p
         lvl.spell_being_used=spell
@@ -255,12 +265,12 @@ def player_spell(p, spell):
                 lvl.selected_spell_target=lvl.pion_pos[i]
                 break
         display.display_selected_target(lvl.selected_spell_target)
-    if spell in ("echange", "teleportation"):
+    elif spell in ("echange", "teleportation"):
         lvl.player_using_spell=p
         lvl.spell_being_used=spell
         lvl.selected_spell_target=lvl.pion_pos[lvl.selected_pion[p]]
         display.display_selected_target(lvl.selected_spell_target)
-    if spell=="appat"\
+    elif spell=="appat"\
     and any(filter(lambda name: "garde" in name, lvl.pion_name)) \
     and any(filter(lambda line: lvl.meanings_reverse["McTrollald"] in line, lvl.level)):
         lvl.player_using_spell=p
@@ -269,6 +279,16 @@ def player_spell(p, spell):
             if "garde" in lvl.pion_name[i]:
                 lvl.selected_spell_target=lvl.pion_pos[i]
         display.display_selected_target(lvl.selected_spell_target)
+    elif spell=="invisibilite":
+        lvl.invisible=True
+        lvl.spell_being_used=spell
+        display.display_pion(lvl.pion_name.index("magicienne"))
+        spell_end_use()
+    elif spell=="fantome":
+        lvl.ghost_mod=True
+        lvl.spell_being_used=spell
+        display.display_pion(lvl.pion_name.index("magicienne"))
+        spell_end_use()
 
     else:
         print("Le sort utilisé n'est pas assigné ou ne peut pas être utilisé maintenant.")
@@ -312,16 +332,20 @@ def selection_change(touche, actual_selection):
 
 def spell_end_effects():
     """Met fin aux effets temporaires des sorts."""
+    # Fin de l'effet grenouille
     for i in range(len(lvl.pion_name)):
-        # Fin de l'effet grenouille
         if "grenouille" in lvl.pion_name[i]:
             lvl.pion_name[i] = "garde_" + lvl.pion_name[i].split("_")[1]
             display.display_pion(i)
-        # Fin de l'effet McTrollald
-        if lvl.eating is not None:
-            pion=lvl.pion_name.index(lvl.eating)
-            lvl.eating=None
-            display.display_pion(pion)
+    # Fin de l'effet McTrollald
+    if lvl.eating is not None:
+        pion=lvl.pion_name.index(lvl.eating)
+        lvl.eating=None
+        display.display_pion(pion)
+    # Fin des effets fantôme et invisibilité
+    lvl.ghost_mod=False
+    lvl.invisible=False
+    display.display_pion(lvl.pion_name.index("magicienne"))
 
 
 def spell_end_use():

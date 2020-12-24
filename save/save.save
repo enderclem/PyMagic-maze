@@ -1,11 +1,11 @@
-timer=161.57774925231934
+timer=24.420505046844482
 nbr of pion=6
-magicienne position=21,15
+magicienne position=21,13
 elfe position=23,17
 nain position=25,15
 barbare position=25,17
-grenouille_0 position=15,13
-garde_1 position=17,15
+garde_0 position=15,13
+garde_1 position=15,15
 nbr of player=1
-J0 actions=go_up,go_left,explore,go_down,go_right,vortex,escalator,spell_echange
+J0 actions=go_up,go_left,go_down,escalator,explore,go_right,vortex
 has stolen=0

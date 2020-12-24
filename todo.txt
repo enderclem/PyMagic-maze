@@ -61,6 +61,7 @@ x fixe téléportation (detection de pion sur les cases vortex + detection FBI d
 x Rendre l'exploration sans feinte pour le joueur (montrer que on peut pas visiter au bord de la carte)
 x fixe bug escalator coin bas gauche (cherche une pair hors des limites du terrain ?)
 x fixe timer (probleme du stop a 0:59)
+- debuggage complet
 --------------------
 - Ajout mur cassé (3 joker)
 - fixation des murs par les gardes au passage
@@ -69,11 +70,11 @@ x fixe timer (probleme du stop a 0:59)
 sort magicienne (yen a plein) :
 x sort balai (ok)
 x sort echange (ok)
-- sort teleportation (ok)
-- sort fantome (ok)
+x sort teleportation (ok)
+x sort fantome (ok)
 x sort grenouille (ok)
-- sort invisibilité (ok)
-- McTroollald's (ok)
+x sort invisibilité (ok)
+x McTroollald's (ok)
 - sort boule de cristal (non)
 - sort code (non)
 - sort clairvoyance (non)

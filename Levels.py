@@ -34,6 +34,8 @@ spell_being_used=None
 selected_spell_target=None
 move_pion=[]
 eating=None
+invisible=False
+ghost_mod=False
 
 # Autres
 actions = ("go_left", "go_right", "go_up", "go_down", "vortex", "escalator", "explore") # Toutes les actions disponibles
@@ -262,7 +264,7 @@ def share_actions(nbr_of_player):
         random_spell="spell_echange"
         for j in range(len(players_act)):
             players_act[j].append(random_spell)"""
-    for random_spell in ("spell_appat", "spell_invisibilite"):
+    for random_spell in ("spell_fantome", "spell_invisibilite"):
         for j in range(len(players_act)):
             players_act[j].append(random_spell)
 

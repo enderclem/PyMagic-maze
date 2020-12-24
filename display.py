@@ -217,19 +217,37 @@ def display_pion(p):
     """
     utk.efface("pion"+str(p))
     name=lvl.pion_name[p]
-    if "grenouille" in name:
-        name="grenouille"
-    utk.image(
-        lvl.pion_pos[p][0]//2 * 40 + 20 + level_pos[0],
-        lvl.pion_pos[p][1]//2 * 40 + 20 + level_pos[1],
-        "sprites/" + name + ".gif",
-        tag="pion"+str(p)
-    )
+    # Affichage de la magicienne en mode fantome
+    if name=="magicienne" and lvl.ghost_mod:
+        utk.image(
+            lvl.pion_pos[p][0]//2 * 40 + 20 + level_pos[0],
+            lvl.pion_pos[p][1]//2 * 40 + 20 + level_pos[1],
+            "sprites/magicienne_ghost.gif",
+            tag="pion"+str(p)
+        )
+    # Affichage des autres pions
+    else:
+        if "grenouille" in name:
+            name="grenouille"
+        utk.image(
+            lvl.pion_pos[p][0]//2 * 40 + 20 + level_pos[0],
+            lvl.pion_pos[p][1]//2 * 40 + 20 + level_pos[1],
+            "sprites/" + name + ".gif",
+            tag="pion"+str(p)
+        )
+    # Affichage si le pion mange
     if name==lvl.eating:
         utk.image(
             lvl.pion_pos[p][0]//2 * 40 + 20 + level_pos[0],
             lvl.pion_pos[p][1]//2 * 40 + 20 + level_pos[1],
             "sprites/eating.gif",
+            tag="pion"+str(p)
+        )
+    if name=="magicienne" and lvl.invisible:
+        utk.image(
+            lvl.pion_pos[p][0]//2 * 40 + 20 + level_pos[0],
+            lvl.pion_pos[p][1]//2 * 40 + 20 + level_pos[1],
+            "sprites/invisibility_circle.gif",
             tag="pion"+str(p)
         )
 
