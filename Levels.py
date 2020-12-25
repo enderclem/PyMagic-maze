@@ -259,14 +259,13 @@ def share_actions(nbr_of_player):
 
     # Distribution des sorts
     to_distribute=list(spells_all)
-    """for i in range(nbr_spells):
+    for i in range(nbr_spells):
         random_spell = to_distribute.pop(random.randint(0, len(to_distribute)-1))
-        random_spell="spell_echange"
-        for j in range(len(players_act)):
-            players_act[j].append(random_spell)"""
-    for random_spell in ("spell_fantome", "spell_invisibilite"):
         for j in range(len(players_act)):
             players_act[j].append(random_spell)
+    """for random_spell in ("spell_fantome", "spell_invisibilite"):
+        for j in range(len(players_act)):
+            players_act[j].append(random_spell)"""
 
     # Initialisation des sélecteurs d'actions/pions
     selected_pion=[0 for i in range(nbr_of_player)]
@@ -303,6 +302,8 @@ def save_game(timer):
         text+=pion_name[i]+" position="+str(pion_pos[i][0])+","+str(pion_pos[i][1])+"\n"
     # Sauvegarde du nombre de joueurs
     text+="nbr of player="+str(nbr_of_player)+"\n"
+    # Sauvegarde du nombre de gardes
+    text+="nbr of guards="+str(nbr_guards)+"\n"
     # Sauvegarde des actions des joueurs
     for i in range(nbr_of_player):
         text+="J"+str(i)+" actions="
@@ -311,6 +312,15 @@ def save_game(timer):
         text+="\n"
     # Sauvegarde de la variable has_stolen
     text+="has stolen="+str(int(has_stolen))+"\n"
+    # Sauvegarde les cases sabliers déjà utilisées
+    line="deactivated hourglass="
+    if deactive_hourglass==[]:
+        line+="None\n"
+    else:
+        for elem in deactive_hourglass:
+            line+=str(elem[0])+","+str(elem[1])+"|"
+        line=line[:-1]+"\n"
+    text+=line
 
     with open("save/save.save", "w") as save:
         save.write(text)
@@ -324,6 +334,7 @@ def save_game(timer):
     # Sauvegarde des position des tuiles
     text="tiles nbr="+str(tiles_nbr)+"\n"
     for pos in tiles_pos.keys():
+        print(str(pos[0])+","+str(pos[1])+":"+str(tiles_pos[pos])+"\n")
         text += str(pos[0])+","+str(pos[1])+":"+str(tiles_pos[pos])+"\n"
     with open("save/tiles_pos.save", "w") as file:
         file.write(text)
@@ -333,7 +344,7 @@ def load_game():
     """
     Charge la sauvegarde du jeu et retourne le timer.
     """
-    global pion_pos, nbr_of_player, players_act, has_stolen, pion_name, level, tiles_pos, tiles_nbr
+    global pion_pos, nbr_of_player, players_act, has_stolen, pion_name, level, tiles_pos, tiles_nbr, nbr_guards, deactive_hourglass
 
     with open("save/save.save", 'r') as save:
         # Chargement du timer
@@ -349,6 +360,8 @@ def load_game():
             pion_pos.append((int(value[0]), int(value[1])))
         # Chargement du nbr de joueur
         nbr_of_player=int(save.readline().split('=')[1])
+        # Sauvegarde du nombre de gardes
+        nbr_guards=int(save.readline().split('=')[1])
         # Chargement des actions des joueurs
         players_act=[]
         for i in range(nbr_of_player):
@@ -356,15 +369,23 @@ def load_game():
             players_act.append([val.replace("\n", "") for val in values])
         # Chargement du booleen has_stolen
         has_stolen=bool(int(save.readline().split('=')[1]))
-        # Chargement du niveau
-        lvl_tile=load_tiles("save/level.tile")[0]
-        level=[]
-        for line in lvl_tile:
-            level.append([c for c in line])
+        # Chargement de deactive_hourglass
+        line=save.readline().replace("deactivated hourglass=", "").strip().split('|')
+        if line[0]!="None":
+            for elem in line:
+                elem=elem.split(",")
+                deactive_hourglass.append((int(elem[0]), int(elem[1])))
+
+
+    # Chargement du niveau
+    lvl_tile=load_tiles("save/level.tile")[0]
+    level=[]
+    for line in lvl_tile:
+        level.append([c for c in line])
 
     # Chargement des positions des tuiles
     with open("save/tiles_pos.save", "r") as save:
-        tiles_nbr=save.readline().split("=")[1]
+        tiles_nbr=int(save.readline().strip().split("=")[1])
         for line in save.readlines():
             line=line.split(":")
             line[0]=line[0].split(",")

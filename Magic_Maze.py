@@ -16,7 +16,7 @@ def main():
     global in_menu, playing
 
     debug_mode = False
-    all_input = ("a", "z", "q", "s", "w", "t", "g", "y", "h", "b")
+    all_input = ("a", "z", "q", "s", "w", "t", "g", "y", "h", "b", "colon", "o", "l", "p", "m", "8", "5", "9", "6", "2", "Up", "Down", "Left", "Right", "Return")
 
     selection = 0
 
@@ -25,11 +25,11 @@ def main():
 
     while True:
 
-        input = utk.attente_touche_jusqua(100-80*debug_mode)
-        print("input :", input)
+        input = utk.attente_touche_jusqua(100-100*debug_mode)
 
         # Gestion du menu
         if lvl.menu_loop:
+            print("input :", input)
             menu.main_menu(input)
             timer.update_timer()
 
@@ -42,6 +42,7 @@ def main():
             if debug_mode:
                 input = all_input[random.randint(0, len(all_input) - 1)]
             ##### Fin parti debug #####
+            print("input :", input)
 
             if input is not None:
                 if lvl.discussing:
@@ -82,7 +83,7 @@ def refresh_display():
     global next_refresh
     if time.process_time()>next_refresh and lvl.playing_loop: # and not menu.paused:
         while time.process_time()>next_refresh:
-            next_refresh+=10
+            next_refresh+=20
         display.display_all_level()
         if menu.paused:
             display.init_pause()

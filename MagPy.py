@@ -87,7 +87,8 @@ def check_exit():
     if lvl.has_stolen:
         for i in range(len(lvl.pion_pos)):
             case = lvl.level[lvl.pion_pos[i][1]][lvl.pion_pos[i][0]]
-            if lvl.meanings[case] != "exit " + lvl.pion_name[i]:
+            if lvl.meanings[case] != "exit " + lvl.pion_name[i] \
+            and "garde" not in lvl.pion_name[i]:
                 return False
 
         lvl.reason_stop = "win"
@@ -119,7 +120,10 @@ def check_steal(input=None):
     """
     for i in range(len(lvl.pion_pos)):
         case = lvl.level[lvl.pion_pos[i][1]][lvl.pion_pos[i][0]]
-        if lvl.meanings[case] != "to steal " + lvl.pion_name[i] and input!="F12":
+        if lvl.meanings[case] != "to steal " + lvl.pion_name[i] \
+        and "garde" not in lvl.pion_name[i] \
+        and input!="F12" \
+        or lvl.has_stolen:
             return None
 
     lvl.has_stolen = True
@@ -509,7 +513,7 @@ def spell_target_selection(input):
                     spell_end_use()
 
 
-    elif input in ("Up", "Down", "Left", "Right") and spell=="teleportation":
+    elif input in ("Up", "Down", "Left", "Right") and spell=="teleportation" and len(lvl.move_pion)!=0:
         vec_move_x = (input == "Right")*2 - (input == "Left")*2
         vec_move_y = (input == "Down")*2 - (input == "Up")*2
         new_pos = (target[0] + vec_move_x, target[1] + vec_move_y)
